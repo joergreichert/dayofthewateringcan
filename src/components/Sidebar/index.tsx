@@ -1,5 +1,4 @@
 import { useCallback } from 'react'
-import styled from 'styled-components'
 
 import CategoryColorBg from '@/components/CategoryColorBg'
 import SidebarMenuItem from '@/components/Sidebar/SidebarMenuItem'
@@ -8,7 +7,7 @@ import { CATEGORY_ID } from '@/lib/constants'
 import useMapContext from '@/src/map/useMapContext'
 import useMapStore from '@/zustand/useMapStore'
 
-const StyledSidebar = styled.div`
+const styledSidebarClassNames = `
   absolute
   left-5
   bottom-5
@@ -44,7 +43,7 @@ const Sidebar = () => {
   )
 
   return isMapGlLoaded ? (
-    <StyledSidebar>
+    <div className={styledSidebarClassNames}>
       <CategoryColorBg outerClassName="p-2">
         <div className="w-full z-10 relative">
           {Object.values(categories).map(category => (
@@ -57,7 +56,7 @@ const Sidebar = () => {
           ))}
         </div>
       </CategoryColorBg>
-    </StyledSidebar>
+    </div>
   ) : null
 }
 

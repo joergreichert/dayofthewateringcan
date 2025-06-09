@@ -1,11 +1,10 @@
 import { memo, useCallback } from 'react'
 import { Marker as ReactMapGLMarker } from 'react-map-gl'
-import styled from 'styled-components'
 
 import IconCircle from '@/components/IconCircle'
 import { Category, Place } from '@/lib/types/entityTypes'
 
-const StyledBadge = styled.span`
+const styledBadgeClassNames = `
   flex
   z-20
   flex-col
@@ -82,7 +81,7 @@ const Marker = memo(
               bgColor={category.color}
             />
           </div>
-          {pointCount && <StyledBadge>{pointCount}</StyledBadge>}
+          {pointCount && <span className={styledBadgeClassNames}>{pointCount}</span>}
         </div>
       </ReactMapGLMarker>
     )

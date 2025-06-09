@@ -1,7 +1,5 @@
 import CategoryColorBg from '@/components/CategoryColorBg'
-import Nav from '@/components/Nav'
-import CategoryDisplay from '@/components/TopBar/CategoryDisplay'
-import { AppConfig, NavVariant } from '@/lib/AppConfig'
+import { AppConfig } from '@/lib/AppConfig'
 import useMapStore from '@/zustand/useMapStore'
 
 const TopBar = () => {
@@ -13,8 +11,8 @@ const TopBar = () => {
       style={{ height: AppConfig.ui.barHeight }}
     >
       <CategoryColorBg className="absolute inset-0" />
-      <div className="px-4 relative flex items-center justify-between h-full">
-        <CategoryDisplay />
+      <div className="px-4 relative flex items-center justify-between h-full text-xl">
+        Deutschland giesst am 4. Juli 2025, dem Tag der Gießkanne!
       </div>
     </div>
   ) : null
