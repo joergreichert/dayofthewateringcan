@@ -1,5 +1,6 @@
+import mapboxgl from 'mapbox-gl'
 import { useCallback } from 'react'
-import { MapRef } from 'react-map-gl'
+import { MapRef, Marker, MarkerProps } from 'react-map-gl'
 
 import { AppConfig } from '@/lib/AppConfig'
 import useMapContext from '@/src/map/useMapContext'
@@ -14,6 +15,11 @@ export interface handleMapMoveProps {
   fly?: boolean
   moveEndOnceCallback?: () => void
   mouseUpOnceCallback?: () => void
+}
+
+export interface handleMapClickProps {
+  longitude: number
+  latitude: number
 }
 
 interface mapMoveData extends handleMapMoveProps {
@@ -62,6 +68,16 @@ const mapMove = ({
 const useMapActions = () => {
   const { map } = useMapContext()
   const setIsAnimating = useMapStore(state => state.setIsAnimating)
+
+  const handleMapClick = useCallback(
+    ({ latitude, longitude }: handleMapClickProps) => {
+      if (map) {
+        const marker = new mapboxgl.Marker().setLngLat([longitude, latitude])
+        marker.addTo(map.getMap())
+      }
+    },
+    [map, setIsAnimating],
+  )
 
   const handleMapMove = useCallback(
     ({
@@ -119,7 +135,7 @@ const useMapActions = () => {
   //   }
   // }, [map, setIsZoomOut])
 
-  return { handleMapMove }
+  return { handleMapMove, handleMapClick }
 }
 
 export default useMapActions

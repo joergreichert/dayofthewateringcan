@@ -1,9 +1,10 @@
 import { throttle } from 'lodash'
 import dynamic from 'next/dynamic'
-import { useCallback, useEffect, useMemo } from 'react'
-import type { ErrorEvent, ViewState, ViewStateChangeEvent } from 'react-map-gl'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import type { ErrorEvent, MapLayerMouseEvent, ViewState, ViewStateChangeEvent } from 'react-map-gl'
 import Map from 'react-map-gl'
 
+import { WateringModal } from '@/components/CreateDialog'
 import useDetectScreen from '@/hooks/useDetectScreen'
 import usePlaces from '@/hooks/usePlaces'
 import { AppConfig } from '@/lib/AppConfig'
@@ -38,7 +39,12 @@ const MapInner = () => {
   const { viewportWidth, viewportHeight, viewportRef } = useDetectScreen()
   const { allPlacesBounds } = usePlaces()
 
-  const { handleMapMove } = useMapActions()
+  const { handleMapMove, handleMapClick } = useMapActions()
+
+  const [showModal, setShowModal] = useState(false)
+  const [submit, setSubmit] = useState(false)
+  const [latitude, setLatitude] = useState<number>()
+  const [longitude, setLongitude] = useState<number>()
 
   const throttledSetViewState = useMemo(
     () => throttle((state: ViewState) => setThrottledViewState(state), 50),
@@ -57,6 +63,19 @@ const MapInner = () => {
     },
     [setViewState, throttledSetViewState],
   )
+
+  const onClick = useCallback((evt: MapLayerMouseEvent) => {
+    setLatitude(evt.lngLat.lat)
+    setLongitude(evt.lngLat.lng)
+    setShowModal(true)
+  }, [])
+
+  useEffect(() => {
+    if (submit && latitude && longitude) {
+      handleMapClick({ latitude, longitude })
+      setSubmit(false)
+    }
+  }, [submit])
 
   // react on change of marker bounding -> usually when viewport changes
   // todo: find out why we need the timeout here
@@ -85,10 +104,11 @@ const MapInner = () => {
           initialViewState={allPlacesBounds}
           ref={e => setMap && setMap(e || undefined)}
           onError={e => onMapError(e)}
+          onClick={onClick}
           onLoad={onLoad}
           onMove={onMapMove}
           style={{ width: viewportWidth, height: viewportHeight }}
-          mapStyle={`https://api.maptiler.com/maps/basic-v2/style.json?key=${AppConfig.map.tileKey}`}
+          mapStyle={`https://api.maptiler.com/maps/0197559a-e36a-7e42-aca7-9e63480bad16/style.json?key=${AppConfig.map.tileKey}`}
           reuseMaps
           // disable map rotation since it's not correctly calculated into the bounds atm :')
           dragRotate={false}
@@ -99,6 +119,14 @@ const MapInner = () => {
           <SettingsBox />
           <Sidebar />
           <TopBar />
+          {showModal && (
+            <WateringModal
+              setShowModal={setShowModal}
+              latitude={latitude}
+              longitude={longitude}
+              setSubmit={setSubmit}
+            />
+          )}
         </Map>
       )}
       {!isMapGlLoaded && (
