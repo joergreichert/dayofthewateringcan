@@ -127,25 +127,6 @@ const SettingsBox = () => {
               step={1}
               className="w-full"
             />
-            <p className="text-lg">
-              <span className="font-bold">
-                Marker Renderering: {markerJSXRendering ? 'JSX ⚠️' : 'Web GL'}
-              </span>
-            </p>
-            <label className="flex gap-3 items-start" htmlFor="markerJSXRendering">
-              <input
-                className="mt-1"
-                id="markerJSXRendering"
-                type="checkbox"
-                checked={markerJSXRendering}
-                onChange={e => handleLegacyJSXRendering(e)}
-              />
-              <span>
-                <b>Enable.</b> - Experimental - If enabled, markers and clusters are rendered in
-                react. Performance may vary depending on your device. If you experience performance
-                issues, higher cluster radius and lower marker count.
-              </span>
-            </label>
           </div>
         </div>
       )}

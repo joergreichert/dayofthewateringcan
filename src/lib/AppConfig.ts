@@ -15,6 +15,9 @@ export const AppConfig = {
   map: {
     deadzone: 50,
     tileKey: process.env.NEXT_PUBLIC_MAPTILER_KEY,
+    apiEndpoint: process.env.NEXT_PUBLIC_MAPBOX_API_ENDPOINT,
+    boundingBox: process.env.NEXT_PUBLIC_MAP_BOUNDING_BOX,
+    apiKey: process.env.NEXT_PUBLIC_MAPBOX_API_KEY,
   },
   animationDuration: 500,
 }

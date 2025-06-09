@@ -58,7 +58,7 @@ const PopupItem = ({ place, handleBackToCluster }: PopupItemProps) => {
                 small
               >
                 <Minimize2 size={AppConfig.ui.mapIconSizeSmall} />
-                Minimize
+                Herauszoomen
               </Button>
             </div>
           </div>
