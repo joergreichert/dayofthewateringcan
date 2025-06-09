@@ -1,6 +1,6 @@
 import { Settings } from 'lucide-react'
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
-import { rsc } from 'react-styled-classnames'
+import styled from 'styled-components'
 
 import CategoryColorBg from '@/components/CategoryColorBg'
 import usePlaces from '@/hooks/usePlaces'
@@ -9,7 +9,7 @@ import useMapActions from '@/map/useMapActions'
 import useMapStore from '@/zustand/useMapStore'
 import useSettingsStore from '@/zustand/useSettingsStore'
 
-const StyledSettingsButton = rsc.button`
+const StyledSettingsButton = styled.button`
   absolute
   left-5
   top-5
@@ -18,7 +18,7 @@ const StyledSettingsButton = rsc.button`
   z-10
 `
 
-const StyledSettingsBox = rsc.div`
+const StyledSettingsBox = styled.div`
   absolute
   left-5
   top-16

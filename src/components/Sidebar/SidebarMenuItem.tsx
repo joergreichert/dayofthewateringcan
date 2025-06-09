@@ -3,7 +3,7 @@ import IconCircle from '@/components/IconCircle'
 import { AppConfig } from '@/lib/AppConfig'
 import { CATEGORY_ID } from '@/lib/constants'
 import { Category } from '@/lib/types/entityTypes'
-import { theme } from '@/root/tailwind.config'
+import tailwindConfig from '@/root/tailwind.config'
 import useMapStore from '@/zustand/useMapStore'
 
 interface SidebarMenuItemProps {
@@ -14,6 +14,7 @@ interface SidebarMenuItemProps {
 
 const SidebarMenuItem = ({ handleClick, selected, category }: SidebarMenuItemProps) => {
   const selectedCategory = useMapStore(state => state.selectedCategory)
+  const { white } = tailwindConfig.theme.colors
 
   return (
     <Button
@@ -29,7 +30,7 @@ const SidebarMenuItem = ({ handleClick, selected, category }: SidebarMenuItemPro
       <IconCircle
         path={category.iconPathSVG}
         size={AppConfig.ui.markerIconSize}
-        bgColor={selectedCategory?.id === category.id ? theme.colors.white : category.color}
+        bgColor={selectedCategory?.id === category.id ? white : category.color}
         invert={selectedCategory?.id === category.id}
       />
       <div className={`md:text-lg ${selectedCategory?.id === category.id ? 'underline' : ''}`}>

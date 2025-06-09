@@ -1,5 +1,6 @@
 import { memo, useCallback, useMemo } from 'react'
 import { MapRef } from 'react-map-gl'
+import { RecursiveKeyValuePair, ResolvableTo } from 'tailwindcss/types/config'
 import useSupercluster from 'use-supercluster'
 
 import useAppTheme from '@/hooks/useTheme'
@@ -31,7 +32,8 @@ const CategoryMarkerCluster = ({
   handleMapMove,
   handleMarkerClick,
 }: CategoryClusterProps) => {
-  const { color: themeColor } = useAppTheme()
+  const theme = useAppTheme()
+  const themeColor: (key: string) => string | RecursiveKeyValuePair<string, string> = theme.color
   const throttledViewState = useMapStore(state => state.throttledViewState)
   const markerSize = useSettingsStore(state => state.markerSize)
 
@@ -137,7 +139,7 @@ const CategoryMarkerCluster = ({
           clusterId={clusterId}
           handleClusterClick={handleClusterClick}
           pointCount={point_count}
-          color={themeColor('mapBg')}
+          color={themeColor('mapBg') as string}
           category={category}
         />
       )
@@ -152,7 +154,7 @@ const CategoryMarkerCluster = ({
         clusterId={clusterId}
         handleMarkerClick={handleMarkerClick}
         category={category}
-        color={themeColor('mapBg')}
+        color={themeColor('mapBg') as string}
       />
     )
   })

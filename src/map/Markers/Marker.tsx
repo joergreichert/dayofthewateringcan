@@ -1,11 +1,11 @@
 import { memo, useCallback } from 'react'
 import { Marker as ReactMapGLMarker } from 'react-map-gl'
-import { rsc } from 'react-styled-classnames'
+import styled from 'styled-components'
 
 import IconCircle from '@/components/IconCircle'
 import { Category, Place } from '@/lib/types/entityTypes'
 
-const StyledBadge = rsc.span`
+const StyledBadge = styled.span`
   flex
   z-20
   flex-col

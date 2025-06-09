@@ -8,7 +8,7 @@ const MapContainer = dynamic(() => import('@/src/map/MapContainer'), { ssr: fals
 const HomePage = () => (
   <div className="absolute overflow-hidden inset-0 bg-mapBg">
     <Head>
-      <title>Map</title>
+      <title>Tag der Gießkanne</title>
     </Head>
     <MapContainer />
   </div>

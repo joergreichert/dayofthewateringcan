@@ -1,4 +1,4 @@
-import { rsc } from 'react-styled-classnames'
+import styled from 'styled-components'
 
 import Icon from '@/components/Icon'
 import { AppConfig, NavVariant } from '@/lib/AppConfig'
@@ -12,7 +12,7 @@ interface StyledListProps {
   $isSelectedCategory?: boolean
 }
 
-const StyledList = rsc.ul<StyledListProps>`
+const StyledList = styled.ul<StyledListProps>`
   flex
   h-full
   ${list => {
@@ -34,7 +34,7 @@ const Nav = ({ variant = NavVariant.INTRO }: NavProps) => {
   return (
     <StyledList $variant={variant} $isSelectedCategory={!!selectedCategory}>
       <NavItem
-        href="https://github.com/richard-unterberg/maplibre-nextjs-ts-starter"
+        href="hhttps://github.com/joergreichert/dayofthewateringcan"
         label="Fork on Github"
         icon={<Icon size={AppConfig.ui.barIconSize} icon={ICON.GITHUB} />}
         external

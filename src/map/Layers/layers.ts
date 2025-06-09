@@ -1,6 +1,6 @@
 import type { LayerProps } from 'react-map-gl'
 
-import { theme } from '@/root/tailwind.config'
+import tailwindConfig from '@/root/tailwind.config'
 
 export const clusterLayer = (categoryId: string, size: number, color: string): LayerProps => ({
   id: `cluster-${categoryId}`,
@@ -37,7 +37,7 @@ export const clusterCountLayer = (categoryId: string): LayerProps => ({
     'text-allow-overlap': true,
   },
   paint: {
-    'text-color': theme.colors.white,
+    'text-color': tailwindConfig.theme.colors.white,
     'text-opacity': 0.95,
   },
 })
@@ -53,7 +53,7 @@ export const clusterCountBadgeLayer = (categoryId: string, size: number): LayerP
     'circle-stroke-opacity': 0.5,
     // 'circle-translate': [0, -size / 2 / 1.4],
     'circle-stroke-width': 1, // Adjust the border width as needed
-    'circle-stroke-color': theme.colors.white,
+    'circle-stroke-color': tailwindConfig.theme.colors.white,
   },
 })
 

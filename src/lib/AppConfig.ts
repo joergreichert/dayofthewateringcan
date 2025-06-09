@@ -1,6 +1,6 @@
 // FIXME: naming and structure
 export const AppConfig = {
-  defaultLanguage: 'en',
+  defaultLanguage: 'de',
   defaultMarkerCount: 500,
   defaultClusterRadius: 80,
   ui: {

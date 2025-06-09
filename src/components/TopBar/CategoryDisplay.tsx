@@ -23,11 +23,7 @@ const CategoryDisplay = () => {
       ) : (
         <div className="absolute flex left-0 top-0 h-full items-center">
           <span className="inline-flex items-center gap-2 uppercase font-bold">
-            <Icon size={AppConfig.ui.barIconSize} icon={ICON.COMPASS} />
-            <div className="text-sm md:text-lg">
-              <p className="leading-none">{throttledViewState?.latitude}</p>
-              <p className="leading-none">{throttledViewState?.longitude}</p>
-            </div>
+            Deutschland giesst am 4. Juli 2025, dem Tag der Gießkanne!
           </span>
         </div>
       )}

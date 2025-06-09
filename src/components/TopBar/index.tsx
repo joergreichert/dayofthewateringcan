@@ -15,7 +15,6 @@ const TopBar = () => {
       <CategoryColorBg className="absolute inset-0" />
       <div className="px-4 relative flex items-center justify-between h-full">
         <CategoryDisplay />
-        <Nav variant={NavVariant.TOPNAV} />
       </div>
     </div>
   ) : null

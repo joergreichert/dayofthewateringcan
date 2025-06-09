@@ -1,10 +1,12 @@
 import { useCallback } from 'react'
 import { spacing } from 'tailwindcss/defaultTheme'
+import { RecursiveKeyValuePair, ResolvableTo } from 'tailwindcss/types/config'
 
-import { theme } from '@/root/tailwind.config'
+import config from '@/root/tailwind.config'
 
 const useAppTheme = () => {
-  const color = useCallback((key: string) => theme.colors[key], [])
+  const { colors } = config.theme
+  const color = useCallback((key: string) => colors[key], [])
 
   const space = useCallback((t: number) => {
     const number = `${t}` as keyof typeof spacing

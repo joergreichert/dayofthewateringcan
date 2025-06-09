@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { rsc } from 'react-styled-classnames'
+import styled from 'styled-components'
 
 import CategoryColorBg from '@/components/CategoryColorBg'
 import SidebarMenuItem from '@/components/Sidebar/SidebarMenuItem'
@@ -8,7 +8,7 @@ import { CATEGORY_ID } from '@/lib/constants'
 import useMapContext from '@/src/map/useMapContext'
 import useMapStore from '@/zustand/useMapStore'
 
-const StyledSidebar = rsc.div`
+const StyledSidebar = styled.div`
   absolute
   left-5
   bottom-5

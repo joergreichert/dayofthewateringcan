@@ -1,16 +1,16 @@
 {
-  "name": "maplibre-starter-typescript",
+  "name": "dayofthewateringcan",
   "homepage": "https://maplibre-nextjs-ts-starter.vercel.app",
   "license": "MIT",
-  "author": "Richard Unterberg <https://github.com/richard-unterberg>",
+  "author": "Joerg Reichert <https://github.com/joergreichert>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/richard-unterberg/maplibre-nextjs-ts-starter"
+    "url": "https://github.com/joergreichert/dayofthewateringcan"
   },
   "bugs": {
-    "url": "https://github.com/richard-unterberg/maplibre-nextjs-ts-starter/issues"
+    "url": "https://github.com/joergreichert/dayofthewateringcan/issues"
   },
-  "version": "0.1.4",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -22,32 +22,34 @@
   },
   "dependencies": {
     "@math.gl/web-mercator": "^3.6.3",
+    "@supabase/supabase-js": "^2.50.0",
     "lodash": "^4.17.21",
     "lucide-react": "^0.259.0",
     "maplibre-gl": "^3.6.2",
-    "next": "15.1.0",
+    "next": "^15.3.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-map-gl": "^7.1.7",
     "react-resize-detector": "^9.1.0",
+    "styled-components": "^6.1.18",
     "supercluster": "^8.0.1",
-    "tailwindcss": " 3.4.16",
+    "tailwindcss": "^3.4.16",
     "use-supercluster": "^1.1.0",
-    "react-styled-classnames": "^0.1.14",
     "zustand": "^5.0.2"
   },
   "devDependencies": {
+    "@eslint/config-array": "^0.20.0",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/lodash": "^4.14.200",
     "@types/node": "20.3.2",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
     "@typescript-eslint/eslint-plugin": "^5.60.1",
-    "autoprefixer": "10.4.14",
-    "eslint": "8.43.0",
-    "eslint-config-airbnb": "19.0.4",
+    "autoprefixer": "^10.4.14",
+    "eslint": "^8.43.0",
+    "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^17.0.0",
-    "eslint-config-next": "14.2.5",
+    "eslint-config-next": "^14.2.5",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-jsx-a11y": "^6.7.1",
@@ -55,11 +57,11 @@
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^8.0.3",
-    "lint-staged": "^14.0.1",
-    "postcss": "8.4.31",
+    "lint-staged": "^16.1.0",
+    "postcss": "^8.4.31",
     "postcss-preset-env": "^9.1.4",
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.3.0",
-    "typescript": "5.1.6"
+    "typescript": "^5.1.6"
   }
 }

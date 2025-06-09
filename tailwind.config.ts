@@ -1,10 +1,11 @@
-const colors = require('tailwindcss/colors')
-const { fontFamily } = require('tailwindcss/defaultTheme')
+import type { Config } from 'tailwindcss'
+import colors from 'tailwindcss/colors'
+import { fontFamily } from 'tailwindcss/defaultTheme'
 
-module.exports = {
+export default {
   content: ['./src/**/*.{js,ts,jsx,tsx}'],
   daisyui: {
-    themes: ["light", "dark", "cupcake"],
+    themes: ['light', 'dark', 'cupcake'],
   },
   theme: {
     colors: {
@@ -31,4 +32,4 @@ module.exports = {
       },
     },
   },
-}
+} satisfies Config

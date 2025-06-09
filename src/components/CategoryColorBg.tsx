@@ -10,7 +10,7 @@ interface CategoryColorBgProps extends React.HTMLAttributes<HTMLDivElement> {
 const CategoryColorBg = ({ children, outerClassName }: CategoryColorBgProps) => {
   const selectedCategory = useMapStore(state => state.selectedCategory)
   const { getCategoryById } = useCategories()
-  const { color } = useAppTheme()
+  const theme = useAppTheme()
 
   return (
     <div className={`${outerClassName ?? ''}`}>
@@ -18,7 +18,7 @@ const CategoryColorBg = ({ children, outerClassName }: CategoryColorBgProps) => 
         style={{
           backgroundColor: selectedCategory
             ? getCategoryById(selectedCategory.id)?.color
-            : color('mapBg'),
+            : (theme.color('mapBg') as string),
         }}
         className="absolute inset-0"
       />
