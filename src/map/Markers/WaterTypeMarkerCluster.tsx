@@ -5,53 +5,53 @@ import useSupercluster from 'use-supercluster'
 
 import useAppTheme from '@/hooks/useTheme'
 import { AppConfig } from '@/lib/AppConfig'
-import { Bound, Category, Place } from '@/lib/types/entityTypes'
+import { Bound, WaterType, Watering } from '@/lib/types/entityTypes'
 import Marker from '@/src/map/Markers/Marker'
 import { handleMapMoveProps } from '@/src/map/useMapActions'
 import useMapStore from '@/zustand/useMapStore'
 import useSettingsStore from '@/zustand/useSettingsStore'
 
-interface CategoryClusterProps {
-  places: Place[]
-  category?: Category
+interface WaterTypeClusterProps {
+  waterings: Watering[]
+  waterType?: WaterType
   mapBounds: number[]
   map?: MapRef
   clusterRadius: number
   handleMapMove: (props: handleMapMoveProps) => void
-  handleMarkerClick: (id: Place['id']) => void
+  handleMarkerClick: (id: Watering['id']) => void
 }
 
 const MemoizedMarker = memo(Marker)
 
-const CategoryMarkerCluster = ({
-  places,
-  category,
+const WaterTypeMarkerCluster = ({
+  waterings,
+  waterType,
   mapBounds,
   map,
   clusterRadius,
   handleMapMove,
   handleMarkerClick,
-}: CategoryClusterProps) => {
+}: WaterTypeClusterProps) => {
   const theme = useAppTheme()
   const themeColor: (key: string) => string | RecursiveKeyValuePair<string, string> = theme.color
   const throttledViewState = useMapStore(state => state.throttledViewState)
   const markerSize = useSettingsStore(state => state.markerSize)
 
   /**
-   * array of Bound objects representing the places as GeoJSON points.
+   * array of Bound objects representing the waterings as GeoJSON points.
    * @type {Bound[]}
    */
   const points: Bound[] = useMemo(
     () =>
-      places.map(place => ({
+      waterings.map(watering => ({
         type: 'Feature',
-        properties: { cluster: false, id: place.id, category: place.category },
+        properties: { cluster: false, id: watering.id, waterType: watering.watertype },
         geometry: {
           type: 'Point',
-          coordinates: [place.longitude, place.latitude],
+          coordinates: [watering.longitude, watering.latitude],
         },
       })),
-    [places],
+    [waterings],
   )
 
   /**
@@ -125,14 +125,14 @@ const CategoryMarkerCluster = ({
   )
 
   return displayedItems.map(cluster => {
-    if (!cluster || !category) return null
+    if (!cluster || !waterType) return null
     const [longitude, latitude] = cluster.geometry.coordinates
     const { cluster: isCluster, point_count, id, cluster_id: clusterId } = cluster.properties
 
     if (isCluster) {
       return (
         <MemoizedMarker
-          key={`c-c${clusterId}c${category.id}`}
+          key={`c-c${clusterId}c${waterType.id}`}
           markerSize={markerSize}
           latitude={latitude}
           longitude={longitude}
@@ -140,24 +140,24 @@ const CategoryMarkerCluster = ({
           handleClusterClick={handleClusterClick}
           pointCount={point_count}
           color={themeColor('mapBg') as string}
-          category={category}
+          waterType={waterType}
         />
       )
     }
     return (
       <MemoizedMarker
-        key={`c-v${id}c${category.id}`}
+        key={`c-v${id}c${waterType.id}`}
         markerId={id}
         markerSize={markerSize}
         latitude={latitude}
         longitude={longitude}
         clusterId={clusterId}
         handleMarkerClick={handleMarkerClick}
-        category={category}
+        waterType={waterType}
         color={themeColor('mapBg') as string}
       />
     )
   })
 }
 
-export default CategoryMarkerCluster
+export default WaterTypeMarkerCluster

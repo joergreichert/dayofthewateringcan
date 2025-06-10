@@ -31,7 +31,7 @@ export function useGeocoding(): GeocodingResultState {
 
     const fetchData = async () => {
       try {
-        const geocodingUrl = `${AppConfig.map.apiEndpoint}/geocoding/v5/mapbox.places/${search}.json?autocomplete=true&language=de&country=de&bbox=${AppConfig.map.boundingBox}&access_token=${AppConfig.map.apiKey}`
+        const geocodingUrl = `${AppConfig.map.apiEndpoint}/geocoding/v5/mapbox.waterings/${search}.json?autocomplete=true&language=de&country=de&bbox=${AppConfig.map.boundingBox}&access_token=${AppConfig.map.apiKey}`
         const res = await fetch(geocodingUrl)
         if (!res.ok) {
           return

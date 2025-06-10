@@ -1,29 +1,29 @@
 import { useCallback, useMemo } from 'react'
 
-import useCategories from '@/hooks/useCategories'
-import usePlaces from '@/hooks/usePlaces'
-import { Place } from '@/lib/types/entityTypes'
+import useWaterTypes from '@/hooks/useWaterTypes'
+import useWaterings from '@/hooks/useWaterings'
+import { Watering } from '@/lib/types/entityTypes'
 import useMapActions from '@/map/useMapActions'
 import useMapContext from '@/map/useMapContext'
-import CategoryMarkerCluster from '@/src/map/Markers/CategoryMarkerCluster'
+import WaterTypeMarkerCluster from '@/src/map/Markers/WaterTypeMarkerCluster'
 import useMapStore from '@/zustand/useMapStore'
 
 const MarkersContainer = () => {
-  const { placesGroupedByCategory } = usePlaces()
+  const { wateringsGroupedByWaterType } = useWaterings()
   const { map } = useMapContext()
   const markerPopup = useMapStore(state => state.markerPopup)
   const setMarkerPopup = useMapStore(state => state.setMarkerPopup)
   const clusterRadius = useMapStore(state => state.clusterRadius)
 
-  const { getPlaceById } = usePlaces()
+  const { getWateringById } = useWaterings()
   const { handleMapMove } = useMapActions()
-  const { getCategoryById } = useCategories()
+  const { getWaterTypeById } = useWaterTypes()
 
   const mapBounds = useMemo(() => (map ? map.getMap().getBounds().toArray().flat() : []), [map])
 
   const handleMarkerClick = useCallback(
-    (id: Place['id']) => {
-      const place = getPlaceById(id)
+    (id: Watering['id']) => {
+      const place = getWateringById(id)
       if (!place || !map || id === markerPopup) return
 
       setMarkerPopup(id)
@@ -38,24 +38,24 @@ const MarkersContainer = () => {
         },
       })
     },
-    [getPlaceById, handleMapMove, map, markerPopup, setMarkerPopup],
+    [getWateringById, handleMapMove, map, markerPopup, setMarkerPopup],
   )
 
   return (
-    placesGroupedByCategory &&
-    Object.entries(placesGroupedByCategory).map(catGroup => {
-      const [category, places] = catGroup
+    wateringsGroupedByWaterType &&
+    Object.entries(wateringsGroupedByWaterType).map(waterTypeGroup => {
+      const [waterType, waterings] = waterTypeGroup
 
       return (
-        <CategoryMarkerCluster
+        <WaterTypeMarkerCluster
           handleMapMove={handleMapMove}
           handleMarkerClick={handleMarkerClick}
-          key={category}
+          key={waterType}
           mapBounds={mapBounds}
           map={map}
-          places={places}
+          waterings={waterings}
           clusterRadius={clusterRadius}
-          category={getCategoryById(parseFloat(category))}
+          waterType={getWaterTypeById(parseFloat(waterType))}
         />
       )
     })

@@ -1,4 +1,4 @@
-import CategoryColorBg from '@/components/CategoryColorBg'
+import WaterTypeColorBg from '@/components/WaterTypeColorBg'
 import { AppConfig } from '@/lib/AppConfig'
 import useMapStore from '@/zustand/useMapStore'
 
@@ -12,7 +12,7 @@ const TopBar = () => {
       className="absolute left-0 top-0 w-full shadow-md"
       style={{ height: AppConfig.ui.barHeight }}
     >
-      <CategoryColorBg className="absolute inset-0" />
+      <WaterTypeColorBg className="absolute inset-0" />
       <div className="px-4 relative flex items-center justify-between h-full text-xl">
         Deutschland giesst am 4. Juli 2025, dem Tag der Gießkanne!
         <LocationSearch />

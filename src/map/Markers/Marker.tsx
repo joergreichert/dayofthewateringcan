@@ -2,7 +2,7 @@ import { memo, useCallback } from 'react'
 import { Marker as ReactMapGLMarker } from 'react-map-gl'
 
 import IconCircle from '@/components/IconCircle'
-import { Category, Place } from '@/lib/types/entityTypes'
+import { WaterType, Watering } from '@/lib/types/entityTypes'
 
 const styledBadgeClassNames = `
   flex
@@ -33,11 +33,11 @@ interface MarkerProps {
   latitude: number
   longitude: number
   clusterId: number
-  category: Category
-  markerId?: Place['id']
+  waterType: WaterType
+  markerId?: Watering['id']
   markerSize: number
   handleClusterClick?: ({ clusterId, latitude, longitude }: handleClusterClickProps) => void
-  handleMarkerClick?: (id: Place['id']) => void
+  handleMarkerClick?: (id: Watering['id']) => void
   pointCount?: number
   color?: string
 }
@@ -52,7 +52,7 @@ const Marker = memo(
     handleClusterClick,
     handleMarkerClick,
     pointCount,
-    category,
+    waterType,
     color,
   }: MarkerProps) => {
     const handleClick = useCallback(() => {
@@ -69,16 +69,16 @@ const Marker = memo(
         <div className="origin-bottom">
           {pointCount && (
             <span
-              style={{ backgroundColor: category.color }}
+              style={{ backgroundColor: waterType.color }}
               className="absolute -inset-2 bg-mapBg rounded-full opacity-40"
             />
           )}
           <div className="relative z-20">
             <IconCircle
               size={markerSize}
-              path={`/${category.iconMedium}`}
+              path={`/${waterType.iconPath}`}
               color={color}
-              bgColor={category.color}
+              bgColor={waterType.color}
             />
           </div>
           {pointCount && <span className={styledBadgeClassNames}>{pointCount}</span>}

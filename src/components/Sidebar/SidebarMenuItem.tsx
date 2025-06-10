@@ -1,39 +1,39 @@
 import Button from '@/components/Button'
 import IconCircle from '@/components/IconCircle'
 import { AppConfig } from '@/lib/AppConfig'
-import { CATEGORY_ID } from '@/lib/constants'
-import { Category } from '@/lib/types/entityTypes'
+import { WATER_TYPE_ID } from '@/lib/constants'
+import { WaterType } from '@/lib/types/entityTypes'
 import tailwindConfig from '@/root/tailwind.config'
 import useMapStore from '@/zustand/useMapStore'
 
 interface SidebarMenuItemProps {
-  handleClick: (categoryId?: CATEGORY_ID) => void
+  handleClick: (categoryId?: WATER_TYPE_ID) => void
   selected: boolean
-  category: Category
+  category: WaterType
 }
 
 const SidebarMenuItem = ({ handleClick, selected, category }: SidebarMenuItemProps) => {
-  const selectedCategory = useMapStore(state => state.selectedCategory)
+  const selectedWaterType = useMapStore(state => state.selectedWaterType)
   const { white } = tailwindConfig.theme.colors
 
   return (
     <Button
       key={category.id}
       className={`relative p-1 gap-2 md:p-2 w-full flex ${
-        selectedCategory ? 'text-white' : ''
+        selectedWaterType ? 'text-white' : ''
       } justify-start`}
       noGutter
-      style={{ ...(!selectedCategory ? { color: category.color } : {}) }}
+      style={{ ...(!selectedWaterType ? { color: category.color } : {}) }}
       onClick={() => handleClick(selected ? undefined : category.id)}
       noBorderRadius
     >
       <IconCircle
-        path={category.iconPathSVG}
+        path={category.iconPath}
         size={AppConfig.ui.markerIconSize}
-        bgColor={selectedCategory?.id === category.id ? white : category.color}
-        invert={selectedCategory?.id === category.id}
+        bgColor={selectedWaterType?.id === category.id ? white : category.color}
+        invert={selectedWaterType?.id === category.id}
       />
-      <div className={`md:text-lg ${selectedCategory?.id === category.id ? 'underline' : ''}`}>
+      <div className={`md:text-lg ${selectedWaterType?.id === category.id ? 'underline' : ''}`}>
         {category.name}
       </div>
     </Button>

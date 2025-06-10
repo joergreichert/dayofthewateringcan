@@ -1,8 +1,8 @@
-export enum CATEGORY_ID {
-  CAT1 = 1,
-  CAT2 = 2,
-  CAT3 = 3,
-  CAT4 = 4,
-  CAT5 = 5,
-  CAT6 = 6,
+export enum WATER_TYPE_ID {
+  RAINWATER = 1,
+  SERVICEWATER = 2,
+  TAPWATER = 3,
+  RIVERWATER = 4,
+  OTHER_WATER = 5,
+  NOT_SPECIFIED = 6,
 }

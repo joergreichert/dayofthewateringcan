@@ -2,15 +2,15 @@ import { ViewState } from 'react-map-gl'
 import { create } from 'zustand'
 
 import { AppConfig } from '@/lib/AppConfig'
-import { Category } from '@/lib/types/entityTypes'
+import { WaterType } from '@/lib/types/entityTypes'
 
 interface MapStoreValues {
   viewportWidth?: number
   setViewportWidth: (payload: number | undefined) => void
   viewportHeight?: number
   setViewportHeight: (payload: number | undefined) => void
-  selectedCategory: Category | undefined
-  setSelectedCategory: (payload: Category | undefined) => void
+  selectedWaterType: WaterType | undefined
+  setSelectedWaterType: (payload: WaterType | undefined) => void
   markerPopup?: number
   setMarkerPopup: (payload: number | undefined) => void
   viewState: ViewState | undefined
@@ -38,8 +38,8 @@ const useMapStore = create<MapStoreValues>()(set => ({
   viewportHeight: undefined,
   setViewportHeight: payload => set(() => ({ viewportHeight: payload })),
 
-  selectedCategory: undefined,
-  setSelectedCategory: payload => set(() => ({ selectedCategory: payload })),
+  selectedWaterType: undefined,
+  setSelectedWaterType: payload => set(() => ({ selectedWaterType: payload })),
 
   markerPopup: undefined,
   setMarkerPopup: payload => set(() => ({ markerPopup: payload })),

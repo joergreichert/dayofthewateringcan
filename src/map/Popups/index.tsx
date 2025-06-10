@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 
-import usePlaces from '@/hooks/usePlaces'
+import useWaterings from '@/hooks/useWaterings'
 import PopupItem from '@/src/map/Popups/PopupItem'
 import useMapActions from '@/src/map/useMapActions'
 import useMapStore from '@/zustand/useMapStore'
@@ -8,8 +8,8 @@ import useMapStore from '@/zustand/useMapStore'
 const PopupsContainer = () => {
   const markerPopup = useMapStore(state => state.markerPopup)
   const setMarkerPopup = useMapStore(state => state.setMarkerPopup)
-  const { markerData } = usePlaces()
-  const { currentBounds } = usePlaces()
+  const { markerData } = useWaterings()
+  const { currentBounds } = useWaterings()
   const { handleMapMove } = useMapActions()
 
   const handleBackToCluster = useCallback(() => {
@@ -29,9 +29,13 @@ const PopupsContainer = () => {
   return (
     <>
       {markerPopup && <div className="bg-dark opacity-30 absolute inset-0 pointer-events-none" />}
-      {markerData.map(place =>
-        place.id === markerPopup ? (
-          <PopupItem key={place.id} handleBackToCluster={handleBackToCluster} place={place} />
+      {markerData.map(watering =>
+        watering.id === markerPopup ? (
+          <PopupItem
+            key={watering.id}
+            handleBackToCluster={handleBackToCluster}
+            watering={watering}
+          />
         ) : null,
       )}
     </>

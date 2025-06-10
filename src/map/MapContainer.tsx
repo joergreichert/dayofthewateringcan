@@ -1,12 +1,13 @@
 import { throttle } from 'lodash'
 import dynamic from 'next/dynamic'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import type { ErrorEvent, MapLayerMouseEvent, ViewState, ViewStateChangeEvent } from 'react-map-gl'
 import Map from 'react-map-gl'
 
 import { WateringModal } from '@/components/CreateDialog'
 import useDetectScreen from '@/hooks/useDetectScreen'
-import usePlaces from '@/hooks/usePlaces'
+import useEditableContext from '@/hooks/useEditableContext'
+import useWaterings from '@/hooks/useWaterings'
 import { AppConfig } from '@/lib/AppConfig'
 import MapContextProvider from '@/src/map/MapContextProvider'
 import MapControls from '@/src/map/MapControls'
@@ -37,7 +38,7 @@ const MapInner = () => {
   const setIsMapGlLoaded = useMapStore(state => state.setIsMapGlLoaded)
   const { setMap, map } = useMapContext()
   const { viewportWidth, viewportHeight, viewportRef } = useDetectScreen()
-  const { allPlacesBounds } = usePlaces()
+  const { allWateringsBounds } = useWaterings()
 
   const { handleMapMove, handleMapClick } = useMapActions()
 
@@ -46,15 +47,17 @@ const MapInner = () => {
   const [latitude, setLatitude] = useState<number>()
   const [longitude, setLongitude] = useState<number>()
 
+  const { editable } = useEditableContext()
+
   const throttledSetViewState = useMemo(
     () => throttle((state: ViewState) => setThrottledViewState(state), 50),
     [setThrottledViewState],
   )
 
   const onLoad = useCallback(() => {
-    if (!allPlacesBounds || isMapGlLoaded) return
+    if (!allWateringsBounds || isMapGlLoaded) return
     setIsMapGlLoaded(true)
-  }, [allPlacesBounds, isMapGlLoaded, setIsMapGlLoaded])
+  }, [allWateringsBounds, isMapGlLoaded, setIsMapGlLoaded])
 
   const onMapMove = useCallback(
     (evt: ViewStateChangeEvent) => {
@@ -64,11 +67,16 @@ const MapInner = () => {
     [setViewState, throttledSetViewState],
   )
 
-  const onClick = useCallback((evt: MapLayerMouseEvent) => {
-    setLatitude(evt.lngLat.lat)
-    setLongitude(evt.lngLat.lng)
-    setShowModal(true)
-  }, [])
+  const onClick = useCallback(
+    (evt: MapLayerMouseEvent) => {
+      if (editable) {
+        setLatitude(evt.lngLat.lat)
+        setLongitude(evt.lngLat.lng)
+        setShowModal(true)
+      }
+    },
+    [editable],
+  )
 
   useEffect(() => {
     if (submit && latitude && longitude) {
@@ -80,28 +88,28 @@ const MapInner = () => {
   // react on change of marker bounding -> usually when viewport changes
   // todo: find out why we need the timeout here
   useEffect(() => {
-    if (!allPlacesBounds || !map) return undefined
+    if (!allWateringsBounds || !map) return undefined
 
     /**
      * Timeout ID returned by setTimeout function.
      */
     const timeout = setTimeout(() => {
       handleMapMove({
-        latitude: allPlacesBounds.latitude,
-        longitude: allPlacesBounds.longitude,
-        zoom: allPlacesBounds.zoom,
+        latitude: allWateringsBounds.latitude,
+        longitude: allWateringsBounds.longitude,
+        zoom: allWateringsBounds.zoom,
       })
     }, 30)
 
     return () => clearTimeout(timeout)
-  }, [allPlacesBounds, handleMapMove, map])
+  }, [allWateringsBounds, handleMapMove, map])
 
   return (
     <div className="absolute overflow-hidden inset-0 bg-mapBg" ref={viewportRef}>
-      {allPlacesBounds && (
+      {allWateringsBounds && (
         <Map
           // {...throttledSetViewState}
-          initialViewState={allPlacesBounds}
+          initialViewState={allWateringsBounds}
           ref={e => setMap && setMap(e || undefined)}
           onError={e => onMapError(e)}
           onClick={onClick}

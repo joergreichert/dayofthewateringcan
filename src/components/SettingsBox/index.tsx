@@ -1,15 +1,16 @@
 import { Settings } from 'lucide-react'
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 
-import CategoryColorBg from '@/components/CategoryColorBg'
-import usePlaces from '@/hooks/usePlaces'
+import WaterTypeColorBg from '@/components/WaterTypeColorBg'
+import useEditableContext from '@/hooks/useEditableContext'
+import useWaterings from '@/hooks/useWaterings'
 import { AppConfig } from '@/lib/AppConfig'
 import useMapActions from '@/map/useMapActions'
 import useMapStore from '@/zustand/useMapStore'
 import useSettingsStore from '@/zustand/useSettingsStore'
 
 const SettingsBox = () => {
-  const selectedCategory = useMapStore(state => state.selectedCategory)
+  const selectedWaterType = useMapStore(state => state.selectedWaterType)
   const clusterRadius = useMapStore(state => state.clusterRadius)
   const markersCount = useSettingsStore(state => state.markersCount)
   const markerSize = useSettingsStore(state => state.markerSize)
@@ -21,31 +22,32 @@ const SettingsBox = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const viewportWidth = useMapStore(state => state.viewportWidth)
 
-  const { rawPlaces, getCatPlaces, allPlacesBounds } = usePlaces()
+  const { rawWaterings, getCatWaterings, allWateringsBounds } = useWaterings()
   const { handleMapMove } = useMapActions()
+  const { editable, setEditable } = useEditableContext()
 
   const currentMaxCounting = useMemo(
-    () => (!selectedCategory ? rawPlaces.length : getCatPlaces(selectedCategory.id).length),
-    [getCatPlaces, rawPlaces.length, selectedCategory],
+    () => (!selectedWaterType ? rawWaterings.length : getCatWaterings(selectedWaterType.id).length),
+    [getCatWaterings, rawWaterings.length, selectedWaterType],
   )
 
   const handleLegacyJSXRendering = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      if (!allPlacesBounds) return
+      if (!allWateringsBounds) return
       if (!e.target.checked) {
         setMarkerJSXRendering(false)
         return
       }
       handleMapMove({
-        latitude: allPlacesBounds.latitude,
-        longitude: allPlacesBounds.longitude,
-        zoom: allPlacesBounds.zoom,
+        latitude: allWateringsBounds.latitude,
+        longitude: allWateringsBounds.longitude,
+        zoom: allWateringsBounds.zoom,
         duration: 300,
         fly: false,
         moveEndOnceCallback: () => setMarkerJSXRendering(true),
       })
     },
-    [allPlacesBounds, handleMapMove, setMarkerJSXRendering],
+    [allWateringsBounds, handleMapMove, setMarkerJSXRendering],
   )
 
   useEffect(() => {
@@ -75,8 +77,8 @@ const SettingsBox = () => {
           className="absolute left-5 top-16 w-80 p-3"
           style={{ marginTop: AppConfig.ui.barHeight }}
         >
-          <CategoryColorBg className="z-10" />
-          <div className={`z-20 relative ${selectedCategory ? 'text-white' : 'text-dark'}`}>
+          <WaterTypeColorBg className="z-10" />
+          <div className={`z-20 relative ${selectedWaterType ? 'text-white' : 'text-dark'}`}>
             <p className="text-lg">
               <span className="font-bold">Marker Data: </span>
               {markersCount} / {currentMaxCounting} items
@@ -127,6 +129,18 @@ const SettingsBox = () => {
               step={1}
               className="w-full"
             />
+            <p className="text-lg">
+              <span className="font-bold">Neue Gießung eintragen: </span>
+              <input
+                type="checkbox"
+                onChange={e => {
+                  if (setEditable) {
+                    setEditable(!editable)
+                  }
+                }}
+                checked={editable}
+              />
+            </p>
           </div>
         </div>
       )}

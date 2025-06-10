@@ -1,24 +1,13 @@
 import Supercluster, { PointFeature } from 'supercluster'
 
-import { CATEGORY_ID } from '@/lib/constants'
+import { WATER_TYPE_ID } from '@/lib/constants'
 
-export type Category = {
-  id: CATEGORY_ID
+export type WaterType = {
+  id: WATER_TYPE_ID
   name: string
-  iconPathSVG: string
-  iconSmall: string
-  iconMedium: string
+  iconPath: string
   color: string
   hideInNav?: boolean
-}
-
-export type Place = {
-  id: number
-  headline: string
-  population: number
-  longitude: number
-  latitude: number
-  category: CATEGORY_ID
 }
 
 export type Bound = PointFeature<{
@@ -32,3 +21,19 @@ export type Cluster =
       [_: string]: any
     }>
   | Supercluster.PointFeature<Supercluster.ClusterProperties & Supercluster.AnyProps>
+
+export interface Watering {
+  id: number
+  name: string | undefined
+  liter: number
+  date?: Date | undefined
+  watertype: WATER_TYPE_ID
+  longitude: number
+  latitude: number
+}
+
+export interface WateringRaw {
+  id: string
+  properties: Watering
+  geometry: GeoJSON.Point
+}

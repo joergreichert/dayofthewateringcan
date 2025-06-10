@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import CreatableSelect from 'react-select/creatable'
 import styled from 'styled-components'
 
-import { CATEGORY_ID } from '@/lib/constants'
+import { WATER_TYPE_ID } from '@/lib/constants'
 
 const Overlay = styled.div`
   box-sizing: border-box;
@@ -69,7 +69,7 @@ export interface LiterOption {
 }
 
 export interface WaterTypeOption {
-  readonly value: CATEGORY_ID
+  readonly value: WATER_TYPE_ID
   readonly label: string
 }
 
@@ -95,23 +95,23 @@ export const WateringModal: React.FC<ModalProps> = ({
     { value: 100, label: '100 Liter' },
   ]
   const defaultWaterTypeOptions: readonly WaterTypeOption[] = [
-    { value: CATEGORY_ID.CAT6, label: 'Keine Angabe' },
-    { value: CATEGORY_ID.CAT1, label: 'Regenwasser' },
-    { value: CATEGORY_ID.CAT2, label: 'Brauchwasser' },
-    { value: CATEGORY_ID.CAT3, label: 'Leitungswasser' },
-    { value: CATEGORY_ID.CAT4, label: 'Flußwasser' },
-    { value: CATEGORY_ID.CAT5, label: 'anderes Wasser' },
+    { value: WATER_TYPE_ID.NOT_SPECIFIED, label: 'Keine Angabe' },
+    { value: WATER_TYPE_ID.RAINWATER, label: 'Regenwasser' },
+    { value: WATER_TYPE_ID.SERVICEWATER, label: 'Brauchwasser' },
+    { value: WATER_TYPE_ID.TAPWATER, label: 'Leitungswasser' },
+    { value: WATER_TYPE_ID.RIVERWATER, label: 'Flußwasser' },
+    { value: WATER_TYPE_ID.OTHER_WATER, label: 'anderes Wasser' },
   ]
   const createLiterOption = (label: string): LiterOption => ({
     label,
     value: Number.parseFloat(label.replace(' Liter', '')),
   })
-  const getWaterTypeValue = (label: string): CATEGORY_ID => {
+  const getWaterTypeValue = (label: string): WATER_TYPE_ID => {
     const found = defaultWaterTypeOptions.filter(opt => opt.label === label)
     if (found && found.length > 0) {
       return found[0].value
     }
-    return CATEGORY_ID.CAT6
+    return WATER_TYPE_ID.NOT_SPECIFIED
   }
   const createWaterTypeOption = (label: string): WaterTypeOption => ({
     label,

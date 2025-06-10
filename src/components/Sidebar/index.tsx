@@ -1,9 +1,9 @@
 import { useCallback } from 'react'
 
-import CategoryColorBg from '@/components/CategoryColorBg'
 import SidebarMenuItem from '@/components/Sidebar/SidebarMenuItem'
-import useCategories from '@/hooks/useCategories'
-import { CATEGORY_ID } from '@/lib/constants'
+import WaterTypeColorBg from '@/components/WaterTypeColorBg'
+import useWaterTypes from '@/hooks/useWaterTypes'
+import { WATER_TYPE_ID } from '@/lib/constants'
 import useMapContext from '@/src/map/useMapContext'
 import useMapStore from '@/zustand/useMapStore'
 
@@ -19,43 +19,43 @@ const Sidebar = () => {
   const { map } = useMapContext()
   const setMarkerPopup = useMapStore(state => state.setMarkerPopup)
   const isAnimating = useMapStore(state => state.isAnimating)
-  const selectedCategory = useMapStore(state => state.selectedCategory)
+  const selectedWaterType = useMapStore(state => state.selectedWaterType)
   const isMapGlLoaded = useMapStore(state => state.isMapGlLoaded)
-  const setSelectedCategory = useMapStore(state => state.setSelectedCategory)
-  const { categories, getCategoryById } = useCategories()
+  const setSelectedWaterType = useMapStore(state => state.setSelectedWaterType)
+  const { waterTypes, getWaterTypeById } = useWaterTypes()
 
   // todo: split into smaller event handlers
   const handleClick = useCallback(
-    (categoryId?: CATEGORY_ID) => {
+    (categoryId?: WATER_TYPE_ID) => {
       if (!map || isAnimating) return
 
       // reset popups
       setMarkerPopup(undefined)
 
       // set category
-      if (categoryId && selectedCategory?.id !== categoryId) {
-        setSelectedCategory(getCategoryById(categoryId))
+      if (categoryId && selectedWaterType?.id !== categoryId) {
+        setSelectedWaterType(getWaterTypeById(categoryId))
       } else {
-        setSelectedCategory(undefined)
+        setSelectedWaterType(undefined)
       }
     },
-    [getCategoryById, isAnimating, map, selectedCategory, setMarkerPopup, setSelectedCategory],
+    [getWaterTypeById, isAnimating, map, selectedWaterType, setMarkerPopup, setSelectedWaterType],
   )
 
   return isMapGlLoaded ? (
     <div className={styledSidebarClassNames}>
-      <CategoryColorBg outerClassName="p-2">
+      <WaterTypeColorBg outerClassName="p-2">
         <div className="w-full z-10 relative">
-          {Object.values(categories).map(category => (
+          {Object.values(waterTypes).map(category => (
             <SidebarMenuItem
               key={category.id}
               category={category}
               handleClick={handleClick}
-              selected={category.id === selectedCategory?.id}
+              selected={category.id === selectedWaterType?.id}
             />
           ))}
         </div>
-      </CategoryColorBg>
+      </WaterTypeColorBg>
     </div>
   ) : null
 }
