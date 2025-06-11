@@ -1,7 +1,9 @@
+import InputNumber from 'rc-input-number'
 import React, { useState } from 'react'
 import CreatableSelect from 'react-select/creatable'
 import styled from 'styled-components'
 
+import useEditableContext from '@/hooks/useEditableContext'
 import { WATER_TYPE_ID } from '@/lib/constants'
 
 const Overlay = styled.div`
@@ -86,14 +88,7 @@ export const WateringModal: React.FC<ModalProps> = ({
   latitude,
   longitude,
 }: ModalProps) => {
-  const defaultLiterOptions: readonly LiterOption[] = [
-    { value: -1, label: 'Keine Angabe' },
-    { value: 5, label: '5 Liter' },
-    { value: 10, label: '10 Liter' },
-    { value: 20, label: '20 Liter' },
-    { value: 50, label: '50 Liter' },
-    { value: 100, label: '100 Liter' },
-  ]
+  const { editable, setEditable } = useEditableContext()
   const defaultWaterTypeOptions: readonly WaterTypeOption[] = [
     { value: WATER_TYPE_ID.NOT_SPECIFIED, label: 'Keine Angabe' },
     { value: WATER_TYPE_ID.RAINWATER, label: 'Regenwasser' },
@@ -102,10 +97,6 @@ export const WateringModal: React.FC<ModalProps> = ({
     { value: WATER_TYPE_ID.RIVERWATER, label: 'Flußwasser' },
     { value: WATER_TYPE_ID.OTHER_WATER, label: 'anderes Wasser' },
   ]
-  const createLiterOption = (label: string): LiterOption => ({
-    label,
-    value: Number.parseFloat(label.replace(' Liter', '')),
-  })
   const getWaterTypeValue = (label: string): WATER_TYPE_ID => {
     const found = defaultWaterTypeOptions.filter(opt => opt.label === label)
     if (found && found.length > 0) {
@@ -118,22 +109,11 @@ export const WateringModal: React.FC<ModalProps> = ({
     value: getWaterTypeValue(label),
   })
   const [isLoading, setIsLoading] = useState(false)
-  const [literOptions, setLiterOptions] = useState(defaultLiterOptions)
-  const [literValue, setLiterValue] = useState<LiterOption | null>(defaultLiterOptions[0])
+  const [literValue, setLiterValue] = useState(0)
   const [waterTypeOptions, setWaterTypeOptions] = useState(defaultWaterTypeOptions)
   const [waterTypeValue, setWaterTypeValue] = useState<WaterTypeOption | null>(
     defaultWaterTypeOptions[0],
   )
-
-  const handleCreateLiter = (inputValue: string) => {
-    setIsLoading(true)
-    setTimeout(() => {
-      const newOption = createLiterOption(inputValue)
-      setIsLoading(false)
-      setLiterOptions(prev => [...prev, newOption])
-      setLiterValue(newOption)
-    }, 1000)
-  }
 
   const handleCreateWaterType = (inputValue: string) => {
     setIsLoading(true)
@@ -148,6 +128,7 @@ export const WateringModal: React.FC<ModalProps> = ({
   const handleSubmit = () => {
     setSubmit(true)
     setShowModal(false)
+    setEditable && setEditable(false)
   }
 
   return (
@@ -156,22 +137,20 @@ export const WateringModal: React.FC<ModalProps> = ({
         <div className="w-full p-5">
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-[max-content_1fr] gap-3 p-5">
-              <span>Längengrad</span>
+              <span>Ort</span>
               <span>{longitude}</span>
-              <span>Breitengrad</span>
-              <span>{latitude}</span>
-              <span>Gegossene Liter</span>
-              <CreatableSelect
-                id="liter-select"
-                isDisabled={isLoading}
-                isLoading={isLoading}
-                formatCreateLabel={newValue => `${newValue} anlegen`}
-                onChange={newValue => setLiterValue(newValue)}
-                onCreateOption={handleCreateLiter}
-                options={literOptions}
+              <span className="mt-2">Gegossene Liter</span>
+              <InputNumber
+                controls
+                onChange={elem => elem && setLiterValue(elem)}
+                style={{ borderWidth: '1px', borderStyle: 'solid', boxSizing: 'border-box' }}
+                className="m-1 p-1"
                 value={literValue}
+                min={0}
+                max={300}
+                step={1}
               />
-              <span>Verwendetes Wasser</span>
+              <span className="mt-2">Verwendetes Wasser</span>
               <CreatableSelect
                 id="water-type-select"
                 isDisabled={isLoading}

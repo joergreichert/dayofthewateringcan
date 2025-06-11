@@ -1,15 +1,19 @@
 import { supabase } from '@/src/lib/supabaseClient'
 
-export const fetchWaterings = async () => {
+import { Watering, WateringRaw } from '../types/entityTypes'
+
+export const fetchWaterings = async (): Promise<Watering[]> => {
   const { data, error } = await supabase.from('waterings').select('*')
 
   if (error) {
     throw new Error(error.message)
   }
+
+  return data
 }
 
-export const saveWaterings = async () => {
-  const { data, error } = await supabase.from('waterings').select('*')
+export const saveWaterings = async (watering: Watering) => {
+  const { error } = await supabase.from('waterings').insert(watering)
 
   if (error) {
     throw new Error(error.message)

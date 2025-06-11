@@ -26,7 +26,6 @@ const onMapError = (evt: ErrorEvent) => {
 const Popups = dynamic(() => import('@/src/map/Popups'))
 const Markers = dynamic(() => import('@/src/map/Markers'))
 const Layers = dynamic(() => import('@/src/map/Layers'))
-const Sidebar = dynamic(() => import('@/components/Sidebar'))
 const SettingsBox = dynamic(() => import('@/components/SettingsBox'))
 const TopBar = dynamic(() => import('@/components/TopBar'))
 
@@ -125,7 +124,6 @@ const MapInner = () => {
           {markerJSXRendering ? <Markers /> : <Layers />}
           <MapControls />
           <SettingsBox />
-          <Sidebar />
           <TopBar />
           {showModal && (
             <WateringModal

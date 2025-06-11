@@ -3,6 +3,7 @@ import { useCallback, useMemo, useRef } from 'react'
 
 import useDetectScreen from '@/hooks/useDetectScreen'
 import useWaterTypes from '@/hooks/useWaterTypes'
+import { fetchWaterings } from '@/hooks/useWateringsApi'
 import { apiWaterings } from '@/lib/api/wateringsMock'
 import { WATER_TYPE_ID } from '@/lib/constants'
 import { Watering } from '@/lib/types/entityTypes'

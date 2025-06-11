@@ -1,150 +1,23 @@
-import { Settings } from 'lucide-react'
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
-
-import WaterTypeColorBg from '@/components/WaterTypeColorBg'
 import useEditableContext from '@/hooks/useEditableContext'
-import useWaterings from '@/hooks/useWaterings'
 import { AppConfig } from '@/lib/AppConfig'
-import useMapActions from '@/map/useMapActions'
-import useMapStore from '@/zustand/useMapStore'
-import useSettingsStore from '@/zustand/useSettingsStore'
 
 const SettingsBox = () => {
-  const selectedWaterType = useMapStore(state => state.selectedWaterType)
-  const clusterRadius = useMapStore(state => state.clusterRadius)
-  const markersCount = useSettingsStore(state => state.markersCount)
-  const markerSize = useSettingsStore(state => state.markerSize)
-  const setMarkerSize = useSettingsStore(state => state.setMarkerSize)
-  const setClusterRadius = useMapStore(state => state.setClusterRadius)
-  const markerJSXRendering = useSettingsStore(state => state.markerJSXRendering)
-  const setMarkerJSXRendering = useSettingsStore(state => state.setMarkerJSXRendering)
-  const setMarkersCount = useSettingsStore(state => state.setMarkersCount)
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
-  const viewportWidth = useMapStore(state => state.viewportWidth)
-
-  const { rawWaterings, getCatWaterings, allWateringsBounds } = useWaterings()
-  const { handleMapMove } = useMapActions()
   const { editable, setEditable } = useEditableContext()
 
-  const currentMaxCounting = useMemo(
-    () => (!selectedWaterType ? rawWaterings.length : getCatWaterings(selectedWaterType.id).length),
-    [getCatWaterings, rawWaterings.length, selectedWaterType],
-  )
-
-  const handleLegacyJSXRendering = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      if (!allWateringsBounds) return
-      if (!e.target.checked) {
-        setMarkerJSXRendering(false)
-        return
-      }
-      handleMapMove({
-        latitude: allWateringsBounds.latitude,
-        longitude: allWateringsBounds.longitude,
-        zoom: allWateringsBounds.zoom,
-        duration: 300,
-        fly: false,
-        moveEndOnceCallback: () => setMarkerJSXRendering(true),
-      })
-    },
-    [allWateringsBounds, handleMapMove, setMarkerJSXRendering],
-  )
-
-  useEffect(() => {
-    if (viewportWidth && viewportWidth > 1024) {
-      setIsSettingsOpen(true)
-    }
-  }, [viewportWidth])
-
-  useEffect(() => {
-    if (markersCount > currentMaxCounting) {
-      setMarkersCount(currentMaxCounting)
-    }
-  }, [currentMaxCounting, markersCount, setMarkersCount])
-
   return (
-    <>
-      <button
-        type="button"
-        className="absolute left-5 top-5 bg-white p-3 z-10"
-        onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-        style={{ marginTop: AppConfig.ui.barHeight }}
-      >
-        <Settings />
-      </button>
-      {isSettingsOpen && (
-        <div
-          className="absolute left-5 top-16 w-80 p-3"
-          style={{ marginTop: AppConfig.ui.barHeight }}
-        >
-          <WaterTypeColorBg className="z-10" />
-          <div className={`z-20 relative ${selectedWaterType ? 'text-white' : 'text-dark'}`}>
-            <p className="text-lg">
-              <span className="font-bold">Marker Data: </span>
-              {markersCount} / {currentMaxCounting} items
-            </p>
-            <input
-              type="range"
-              min={5}
-              onChange={e => setMarkersCount(parseFloat(e.target.value))}
-              max={currentMaxCounting}
-              value={markersCount}
-              step={1}
-              className="w-full"
-            />
-            <p className="text-lg">
-              <span className="font-bold">Marker Size: </span>
-              {`${markerSize}px`}
-            </p>
-            <input
-              type="range"
-              min={AppConfig.ui.mapIconSizeSmall}
-              onChange={e => {
-                // todo: outsource this to own handler
-                const newMarkerSize = parseFloat(e.target.value)
-                setMarkerSize(newMarkerSize)
-
-                // Set clusterRadius to the new marker size only if it's smaller than the current clusterRadius
-                if (newMarkerSize > clusterRadius) {
-                  setClusterRadius(newMarkerSize)
-                }
-              }}
-              max={AppConfig.ui.mapIconSizeBig}
-              value={markerSize}
-              step={1}
-              className="w-full"
-            />
-            <p className="text-lg">
-              <span className="font-bold">Cluster Radius: </span>
-              {`${clusterRadius}px`}
-            </p>
-            <input
-              type="range"
-              min={markerSize}
-              onChange={e => {
-                setClusterRadius(parseFloat(e.target.value))
-              }}
-              max={200}
-              value={clusterRadius}
-              step={1}
-              className="w-full"
-            />
-            <p className="text-lg">
-              <span className="font-bold">Neue Gießung eintragen: </span>
-              <input
-                type="checkbox"
-                onChange={e => {
-                  if (setEditable) {
-                    setEditable(!editable)
-                  }
-                }}
-                checked={editable}
-              />
-            </p>
-          </div>
-        </div>
-      )}
-    </>
+    <button
+      className="absolute z-10 left-5 top-5 bg-white p-3 z-10"
+      disabled={editable}
+      type="button"
+      style={{ marginTop: AppConfig.ui.barHeight }}
+      onClick={e => {
+        if (setEditable) {
+          setEditable(!editable)
+        }
+      }}
+    >
+      {!editable ? 'Neue Gießung eintragen' : 'Bitte auf Karte klicken'}
+    </button>
   )
 }
 
