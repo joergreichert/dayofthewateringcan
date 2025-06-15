@@ -23,9 +23,9 @@ export type Cluster =
   | Supercluster.PointFeature<Supercluster.ClusterProperties & Supercluster.AnyProps>
 
 export interface Watering {
-  id: number
+  id?: number | undefined
   name: string | undefined
-  liter: number
+  liter: number | undefined
   date?: Date | undefined
   watertype: WATER_TYPE_ID
   longitude: number
@@ -33,7 +33,8 @@ export interface Watering {
 }
 
 export interface WateringRaw {
-  id: string
+  id?: number | undefined
+  created: Date
   properties: Watering
-  geometry: GeoJSON.Point
+  geom: GeoJSON.Point
 }

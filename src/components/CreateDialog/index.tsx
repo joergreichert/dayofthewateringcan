@@ -1,10 +1,13 @@
 import InputNumber from 'rc-input-number'
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import CreatableSelect from 'react-select/creatable'
 import styled from 'styled-components'
 
 import useEditableContext from '@/hooks/useEditableContext'
+import { useReverseGeocoding } from '@/hooks/useGeocoding'
+import { saveWaterings } from '@/hooks/useWateringsApi'
 import { WATER_TYPE_ID } from '@/lib/constants'
+import { Watering } from '@/lib/types/entityTypes'
 
 const Overlay = styled.div`
   box-sizing: border-box;
@@ -80,6 +83,7 @@ type ModalProps = {
   setSubmit: React.Dispatch<React.SetStateAction<boolean>>
   latitude: number | undefined
   longitude: number | undefined
+  resolvedLocation: string | undefined
 }
 
 export const WateringModal: React.FC<ModalProps> = ({
@@ -87,6 +91,7 @@ export const WateringModal: React.FC<ModalProps> = ({
   setSubmit,
   latitude,
   longitude,
+  resolvedLocation,
 }: ModalProps) => {
   const { editable, setEditable } = useEditableContext()
   const defaultWaterTypeOptions: readonly WaterTypeOption[] = [
@@ -125,8 +130,23 @@ export const WateringModal: React.FC<ModalProps> = ({
     }, 1000)
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    const watering: Watering = {
+      name: resolvedLocation,
+      liter: literValue,
+      latitude: latitude || 0,
+      longitude: longitude || 0,
+      watertype: waterTypeValue?.value || WATER_TYPE_ID.NOT_SPECIFIED,
+      date: new Date(),
+    }
+    await saveWaterings(watering)
     setSubmit(true)
+    setShowModal(false)
+    setEditable && setEditable(false)
+  }
+
+  const handleCancel = () => {
+    setSubmit(false)
     setShowModal(false)
     setEditable && setEditable(false)
   }
@@ -138,7 +158,7 @@ export const WateringModal: React.FC<ModalProps> = ({
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-[max-content_1fr] gap-3 p-5">
               <span>Ort</span>
-              <span>{longitude}</span>
+              <span style={{ height: '70px' }}>{resolvedLocation || '\n\n\n'}</span>
               <span className="mt-2">Gegossene Liter</span>
               <InputNumber
                 controls
@@ -162,9 +182,9 @@ export const WateringModal: React.FC<ModalProps> = ({
                 value={waterTypeValue}
               />
             </div>
-            <div className="grid grid-cols-2 gap-3 p-5">
+            <div className="grid grid-cols-2 gap-3 ml-5 mr-5">
               <Button type="submit">Eintragen</Button>
-              <Button type="button" onClick={() => setShowModal(false)}>
+              <Button type="button" onClick={handleCancel}>
                 Abbrechen
               </Button>
             </div>

@@ -1,7 +1,8 @@
 CREATE TABLE IF NOT EXISTS "public"."waterings" (
     "id" integer NOT NULL,
+    "properties" "jsonb",
     created timestamp without time zone,
-    "properties" "jsonb"
+    "geom" "public"."geometry"(Point,4326)
 );
 
 ALTER TABLE "public"."waterings" OWNER TO "postgres";

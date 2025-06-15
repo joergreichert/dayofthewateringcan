@@ -33,7 +33,6 @@ interface MarkerProps {
   latitude: number
   longitude: number
   clusterId: number
-  waterType: WaterType
   markerId?: Watering['id']
   markerSize: number
   handleClusterClick?: ({ clusterId, latitude, longitude }: handleClusterClickProps) => void
@@ -52,7 +51,6 @@ const Marker = memo(
     handleClusterClick,
     handleMarkerClick,
     pointCount,
-    waterType,
     color,
   }: MarkerProps) => {
     const handleClick = useCallback(() => {
@@ -69,16 +67,16 @@ const Marker = memo(
         <div className="origin-bottom">
           {pointCount && (
             <span
-              style={{ backgroundColor: waterType.color }}
+              style={{ backgroundColor: 'blue' }}
               className="absolute -inset-2 bg-mapBg rounded-full opacity-40"
             />
           )}
           <div className="relative z-20">
             <IconCircle
               size={markerSize}
-              path={`/${waterType.iconPath}`}
+              path="/icons/watering-can.svg"
               color={color}
-              bgColor={waterType.color}
+              bgColor="#708090"
             />
           </div>
           {pointCount && <span className={styledBadgeClassNames}>{pointCount}</span>}

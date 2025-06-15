@@ -9,11 +9,19 @@ export const fetchWaterings = async (): Promise<Watering[]> => {
     throw new Error(error.message)
   }
 
-  return data
+  return (data as WateringRaw[]).map(raw => raw.properties)
 }
 
 export const saveWaterings = async (watering: Watering) => {
-  const { error } = await supabase.from('waterings').insert(watering)
+  const wateringRaw: WateringRaw = {
+    created: watering.date || new Date(),
+    properties: watering,
+    geom: {
+      type: 'Point',
+      coordinates: [watering.longitude, watering.latitude],
+    },
+  }
+  const { error } = await supabase.from('waterings').insert(wateringRaw)
 
   if (error) {
     throw new Error(error.message)

@@ -11,9 +11,8 @@ import { handleMapMoveProps } from '@/src/map/useMapActions'
 import useMapStore from '@/zustand/useMapStore'
 import useSettingsStore from '@/zustand/useSettingsStore'
 
-interface WaterTypeClusterProps {
+interface WateringClusterProps {
   waterings: Watering[]
-  waterType?: WaterType
   mapBounds: number[]
   map?: MapRef
   clusterRadius: number
@@ -23,15 +22,14 @@ interface WaterTypeClusterProps {
 
 const MemoizedMarker = memo(Marker)
 
-const WaterTypeMarkerCluster = ({
+const WateringMarkerCluster = ({
   waterings,
-  waterType,
   mapBounds,
   map,
   clusterRadius,
   handleMapMove,
   handleMarkerClick,
-}: WaterTypeClusterProps) => {
+}: WateringClusterProps) => {
   const theme = useAppTheme()
   const themeColor: (key: string) => string | RecursiveKeyValuePair<string, string> = theme.color
   const throttledViewState = useMapStore(state => state.throttledViewState)
@@ -125,14 +123,14 @@ const WaterTypeMarkerCluster = ({
   )
 
   return displayedItems.map(cluster => {
-    if (!cluster || !waterType) return null
+    if (!cluster) return null
     const [longitude, latitude] = cluster.geometry.coordinates
     const { cluster: isCluster, point_count, id, cluster_id: clusterId } = cluster.properties
 
     if (isCluster) {
       return (
         <MemoizedMarker
-          key={`c-c${clusterId}c${waterType.id}`}
+          key={`c-c${clusterId}`}
           markerSize={markerSize}
           latitude={latitude}
           longitude={longitude}
@@ -140,24 +138,22 @@ const WaterTypeMarkerCluster = ({
           handleClusterClick={handleClusterClick}
           pointCount={point_count}
           color={themeColor('mapBg') as string}
-          waterType={waterType}
         />
       )
     }
     return (
       <MemoizedMarker
-        key={`c-v${id}c${waterType.id}`}
+        key={`c-v${id}`}
         markerId={id}
         markerSize={markerSize}
         latitude={latitude}
         longitude={longitude}
         clusterId={clusterId}
         handleMarkerClick={handleMarkerClick}
-        waterType={waterType}
         color={themeColor('mapBg') as string}
       />
     )
   })
 }
 
-export default WaterTypeMarkerCluster
+export default WateringMarkerCluster

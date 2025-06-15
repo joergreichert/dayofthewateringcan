@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react'
 import { GeoJSONSource, Layer, Source } from 'react-map-gl'
 
-import useWaterTypes from '@/hooks/useWaterTypes'
 import useWaterings from '@/hooks/useWaterings'
-import { WATER_TYPE_ID } from '@/lib/constants'
 import {
   clusterBelowLayer,
   clusterCountBadgeLayer,
@@ -18,24 +16,20 @@ import useMapStore from '@/zustand/useMapStore'
 import useSettingsStore from '@/zustand/useSettingsStore'
 
 const Layers = () => {
-  const { wateringsGroupedByWaterType, markerWaterTypeIDs, getWateringById } = useWaterings()
-  const { getWaterTypeById } = useWaterTypes()
+  const { rawWaterings, getWateringById } = useWaterings()
   const markerSize = useSettingsStore(state => state.markerSize)
   const clusterRadius = useMapStore(state => state.clusterRadius)
   const setMarkerPopup = useMapStore(state => state.setMarkerPopup)
   const { map } = useMapContext()
   const { handleMapMove } = useMapActions()
 
-  const waterTypeCluster = useMemo(
-    () =>
-      Object.entries(wateringsGroupedByWaterType).map(catGroup => {
-        const [waterType, waterings] = catGroup
-
-        const features: GeoJSON.Feature<GeoJSON.Point>[] = waterings.map(place => ({
+  const wateringCluster = useMemo(() => {
+    const features: GeoJSON.Feature<GeoJSON.Point>[] = !rawWaterings
+      ? []
+      : rawWaterings.map(place => ({
           type: 'Feature',
           properties: {
             id: place.id,
-            waterType,
           },
           geometry: {
             type: 'Point',
@@ -43,48 +37,46 @@ const Layers = () => {
           },
         }))
 
-        const collection: GeoJSON.FeatureCollection<GeoJSON.Point> = {
-          type: 'FeatureCollection',
-          features,
-        }
+    const collection: GeoJSON.FeatureCollection<GeoJSON.Point> = {
+      type: 'FeatureCollection',
+      features,
+    }
 
-        const catColor = getWaterTypeById(parseFloat(waterType))?.color || 'red'
+    const catColor = '#708090'
 
-        return (
-          <Source
-            key={`${waterType}${clusterRadius}`}
-            id={`source-${waterType}`}
-            type="geojson"
-            data={collection}
-            clusterMaxZoom={17}
-            clusterRadius={clusterRadius}
-            cluster
-          >
-            <Layer {...markerLayer(waterType, markerSize, catColor)} />
-            <Layer {...clusterBelowLayer(waterType, markerSize, catColor)} />
-            <Layer {...clusterLayer(waterType, markerSize, catColor)} />
-            <Layer {...iconLayer(waterType, markerSize)} />
-            <Layer {...clusterCountBadgeLayer(waterType, markerSize)} />
-            <Layer {...clusterCountLayer(waterType)} />
-          </Source>
-        )
-      }),
-    [clusterRadius, getWaterTypeById, markerSize, wateringsGroupedByWaterType],
-  )
+    return (
+      <Source
+        key={`${'watering'}${clusterRadius}`}
+        id={`source-${'watering'}`}
+        type="geojson"
+        data={collection}
+        clusterMaxZoom={17}
+        clusterRadius={clusterRadius}
+        cluster
+      >
+        <Layer {...markerLayer('watering', markerSize, catColor)} />
+        <Layer {...clusterBelowLayer('watering', markerSize, catColor)} />
+        <Layer {...clusterLayer('watering', markerSize, catColor)} />
+        <Layer {...iconLayer('watering', markerSize)} />
+        <Layer {...clusterCountBadgeLayer('watering', markerSize)} />
+        <Layer {...clusterCountLayer('watering')} />
+      </Source>
+    )
+  }, [clusterRadius, markerSize, rawWaterings])
 
   const onClick = useCallback(
-    (event: mapboxgl.MapMouseEvent & mapboxgl.EventData, waterType: WATER_TYPE_ID) => {
-      if (!map || !wateringsGroupedByWaterType) return
+    (event: mapboxgl.MapMouseEvent & mapboxgl.EventData) => {
+      if (!map || !rawWaterings) return
       event.preventDefault()
 
       const clusters = map.queryRenderedFeatures(event.point, {
-        layers: [`cluster-${waterType}`],
+        layers: [`cluster-${'watering'}`],
       })
       const markers = map.queryRenderedFeatures(event.point, {
-        layers: [`marker-${waterType}`],
+        layers: [`marker-${'watering'}`],
       })
 
-      const mapboxSource = map.getSource(`source-${waterType}`) as GeoJSONSource
+      const mapboxSource = map.getSource(`source-${'watering'}`) as GeoJSONSource
 
       if (clusters.length) {
         const clusterId = clusters[0]?.properties?.cluster_id
@@ -118,38 +110,36 @@ const Layers = () => {
         },
       })
     },
-    [getWateringById, handleMapMove, map, setMarkerPopup, wateringsGroupedByWaterType],
+    [getWateringById, handleMapMove, map, setMarkerPopup, rawWaterings],
   )
 
   useEffect(() => {
-    map &&
-      markerWaterTypeIDs?.forEach(waterType => {
-        map.on('click', `cluster-${waterType}`, e => onClick(e, waterType))
-        map.on('click', `marker-${waterType}`, e => onClick(e, waterType))
+    if (map) {
+      map.on('click', `cluster-${'watering'}`, e => onClick(e))
+      map.on('click', `marker-${'watering'}`, e => onClick(e))
 
-        const catImage = getWaterTypeById(waterType)?.iconPath || ''
+      const catImage = '/icons/watering-can.svg'
 
-        map?.loadImage(`${catImage}`, (error, image) => {
-          if (!map.hasImage(`waterType-thumb-${waterType}`)) {
-            if (!image || error) return
-            map.addImage(`waterType-thumb-${waterType}`, image)
-          }
-        })
+      map?.loadImage(`${catImage}`, (error, image) => {
+        if (!map.hasImage(`category-thumb-${'watering'}`)) {
+          if (!image || error) return
+          map.addImage(`category-thumb-${'watering'}`, image)
+        }
       })
+    }
 
     return () => {
-      map &&
-        markerWaterTypeIDs?.forEach(waterType => {
-          map.off('click', `cluster-${waterType}`, e => onClick(e, waterType))
-          map.off('click', `marker-${waterType}`, e => onClick(e, waterType))
-          if (map.hasImage(`waterType-thumb-${waterType}`)) {
-            map.removeImage(`waterType-thumb-${waterType}`)
-          }
-        })
+      if (map) {
+        map.off('click', `cluster-${'watering'}`, e => onClick(e))
+        map.off('click', `marker-${'watering'}`, e => onClick(e))
+        if (map.hasImage(`category-thumb-${'watering'}`)) {
+          map.removeImage(`category-thumb-${'watering'}`)
+        }
+      }
     }
-  }, [getWaterTypeById, map, markerWaterTypeIDs, onClick])
+  }, [map, rawWaterings, onClick])
 
-  return waterTypeCluster
+  return wateringCluster
 }
 
 export default Layers

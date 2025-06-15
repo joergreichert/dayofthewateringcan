@@ -1,12 +1,13 @@
 import { throttle } from 'lodash'
 import dynamic from 'next/dynamic'
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { ErrorEvent, MapLayerMouseEvent, ViewState, ViewStateChangeEvent } from 'react-map-gl'
 import Map from 'react-map-gl'
 
 import { WateringModal } from '@/components/CreateDialog'
 import useDetectScreen from '@/hooks/useDetectScreen'
 import useEditableContext from '@/hooks/useEditableContext'
+import { useReverseGeocoding } from '@/hooks/useGeocoding'
 import useWaterings from '@/hooks/useWaterings'
 import { AppConfig } from '@/lib/AppConfig'
 import MapContextProvider from '@/src/map/MapContextProvider'
@@ -77,6 +78,21 @@ const MapInner = () => {
     [editable],
   )
 
+  const [resolvedLocation, setResolvedLocation] = useState<string>()
+  const { fetchReverseGeocodingResults, reverseGeocodingResults } = useReverseGeocoding()
+
+  useEffect(() => {
+    if (latitude && longitude) {
+      fetchReverseGeocodingResults(latitude, longitude)
+    }
+  }, [latitude, longitude])
+
+  useEffect(() => {
+    if (reverseGeocodingResults.length > 0) {
+      setResolvedLocation(reverseGeocodingResults[0].place_name_de)
+    }
+  }, [reverseGeocodingResults])
+
   useEffect(() => {
     if (submit && latitude && longitude) {
       handleMapClick({ latitude, longitude })
@@ -130,6 +146,7 @@ const MapInner = () => {
               setShowModal={setShowModal}
               latitude={latitude}
               longitude={longitude}
+              resolvedLocation={resolvedLocation}
               setSubmit={setSubmit}
             />
           )}

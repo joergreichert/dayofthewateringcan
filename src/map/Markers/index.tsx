@@ -1,23 +1,20 @@
 import { useCallback, useMemo } from 'react'
 
-import useWaterTypes from '@/hooks/useWaterTypes'
 import useWaterings from '@/hooks/useWaterings'
 import { Watering } from '@/lib/types/entityTypes'
 import useMapActions from '@/map/useMapActions'
 import useMapContext from '@/map/useMapContext'
-import WaterTypeMarkerCluster from '@/src/map/Markers/WaterTypeMarkerCluster'
+import WateringMarkerCluster from '@/src/map/Markers/WateringMarkerCluster'
 import useMapStore from '@/zustand/useMapStore'
 
-const MarkersContainer = () => {
-  const { wateringsGroupedByWaterType } = useWaterings()
+const MarkersContainer = async () => {
+  const { rawWaterings, getWateringById } = await useWaterings()
   const { map } = useMapContext()
   const markerPopup = useMapStore(state => state.markerPopup)
   const setMarkerPopup = useMapStore(state => state.setMarkerPopup)
   const clusterRadius = useMapStore(state => state.clusterRadius)
 
-  const { getWateringById } = useWaterings()
   const { handleMapMove } = useMapActions()
-  const { getWaterTypeById } = useWaterTypes()
 
   const mapBounds = useMemo(() => (map ? map.getMap().getBounds().toArray().flat() : []), [map])
 
@@ -42,23 +39,15 @@ const MarkersContainer = () => {
   )
 
   return (
-    wateringsGroupedByWaterType &&
-    Object.entries(wateringsGroupedByWaterType).map(waterTypeGroup => {
-      const [waterType, waterings] = waterTypeGroup
-
-      return (
-        <WaterTypeMarkerCluster
-          handleMapMove={handleMapMove}
-          handleMarkerClick={handleMarkerClick}
-          key={waterType}
-          mapBounds={mapBounds}
-          map={map}
-          waterings={waterings}
-          clusterRadius={clusterRadius}
-          waterType={getWaterTypeById(parseFloat(waterType))}
-        />
-      )
-    })
+    <WateringMarkerCluster
+      handleMapMove={handleMapMove}
+      handleMarkerClick={handleMarkerClick}
+      key="watering"
+      mapBounds={mapBounds}
+      map={map}
+      waterings={rawWaterings || []}
+      clusterRadius={clusterRadius}
+    />
   )
 }
 
