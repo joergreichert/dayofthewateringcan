@@ -44,10 +44,10 @@ const Modal = styled.div`
   border-radius: 0.75rem;
   box-shadow: 0px 20px 24px -4px rgba(16, 24, 40, 0.1), 0px 8px 8px -4px rgba(16, 24, 40, 0.04);
   transition: all 0.5s ease;
-  z-index: 1;
+  z-index: 20;
 `
 
-const Button = styled.button`
+export const Button = styled.button`
   background-color: #3f51b5;
   color: white;
   padding: 5px 15px;
