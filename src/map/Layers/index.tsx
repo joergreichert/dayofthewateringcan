@@ -46,20 +46,20 @@ const Layers = () => {
 
     return (
       <Source
-        key={`${'watering'}${clusterRadius}`}
-        id={`source-${'watering'}`}
+        key={`watering${clusterRadius}`}
+        id="source-watering"
         type="geojson"
         data={collection}
         clusterMaxZoom={17}
         clusterRadius={clusterRadius}
         cluster
       >
-        <Layer {...markerLayer('watering', markerSize, catColor)} />
-        <Layer {...clusterBelowLayer('watering', markerSize, catColor)} />
-        <Layer {...clusterLayer('watering', markerSize, catColor)} />
-        <Layer {...iconLayer('watering', markerSize)} />
-        <Layer {...clusterCountBadgeLayer('watering', markerSize)} />
-        <Layer {...clusterCountLayer('watering')} />
+        <Layer {...markerLayer(markerSize, catColor)} />
+        <Layer {...clusterBelowLayer(markerSize, catColor)} />
+        <Layer {...clusterLayer(markerSize, catColor)} />
+        <Layer {...iconLayer(markerSize)} />
+        <Layer {...clusterCountBadgeLayer(markerSize)} />
+        <Layer {...clusterCountLayer()} />
       </Source>
     )
   }, [clusterRadius, markerSize, rawWaterings])
@@ -67,73 +67,77 @@ const Layers = () => {
   const onClick = useCallback(
     (event: mapboxgl.MapMouseEvent & mapboxgl.EventData) => {
       if (!map || !rawWaterings) return
-      event.preventDefault()
-
-      const clusters = map.queryRenderedFeatures(event.point, {
-        layers: [`cluster-${'watering'}`],
-      })
-      const markers = map.queryRenderedFeatures(event.point, {
-        layers: [`marker-${'watering'}`],
-      })
-
-      const mapboxSource = map.getSource(`source-${'watering'}`) as GeoJSONSource
-
-      if (clusters.length) {
-        const clusterId = clusters[0]?.properties?.cluster_id
-        mapboxSource.getClusterExpansionZoom(clusterId, (_err, zoom) => {
-          // be save & return if zoom is undefined
-          if (!zoom) return
-
-          handleMapMove({
-            latitude: event.lngLat.lat,
-            longitude: event.lngLat.lng,
-            zoom: zoom + 0.5,
-          })
-        })
+      if (!map.loaded()) {
         return
       }
+      event.preventDefault()
 
-      const markerId = markers[0]?.properties?.id
-      const place = getWateringById(markerId)
-      if (!place) return
+      setTimeout(() => {
+        const clusters = map.queryRenderedFeatures(event.point, {
+          layers: ['cluster-watering'],
+        })
+        if (clusters.length) {
+          const clusterId = clusters[0]?.properties?.cluster_id
+          const mapboxSource = map.getSource('source-watering') as GeoJSONSource
+          mapboxSource.getClusterExpansionZoom(clusterId, (_err, zoom) => {
+            // be save & return if zoom is undefined
+            if (!zoom) return
 
-      setMarkerPopup(place.id)
-
-      handleMapMove({
-        latitude: place.latitude,
-        longitude: place.longitude,
-        fly: false,
-        zoom: map.getZoom(),
-        offset: [0, -30],
-        mouseUpOnceCallback: () => {
-          setMarkerPopup(undefined)
-        },
+            handleMapMove({
+              latitude: event.lngLat.lat,
+              longitude: event.lngLat.lng,
+              zoom: zoom + 0.5,
+            })
+          })
+        }
       })
+
+      setTimeout(() => {
+        const markers = map.queryRenderedFeatures(event.point, { layers: ['marker-watering'] })
+
+        const markerId = markers[0]?.properties?.id
+        if (!markerId) return
+        const place = getWateringById(markerId)
+        if (!place) return
+
+        setMarkerPopup(place.id)
+
+        handleMapMove({
+          latitude: place.latitude,
+          longitude: place.longitude,
+          fly: false,
+          zoom: map.getZoom(),
+          offset: [0, -30],
+          mouseUpOnceCallback: () => {
+            setMarkerPopup(undefined)
+          },
+        })
+      }, 500)
     },
     [getWateringById, handleMapMove, map, setMarkerPopup, rawWaterings],
   )
 
   useEffect(() => {
     if (map) {
-      map.on('click', `cluster-${'watering'}`, e => onClick(e))
-      map.on('click', `marker-${'watering'}`, e => onClick(e))
+      map.on('click', 'cluster-watering', e => onClick(e))
+      map.on('click', 'marker-watering', e => onClick(e))
 
-      const catImage = '/icons/watering-can.svg'
+      const catImage = '/icons/river-icon-clipart.png'
 
       map?.loadImage(`${catImage}`, (error, image) => {
-        if (!map.hasImage(`category-thumb-${'watering'}`)) {
+        if (!map.hasImage('thumb-watering')) {
           if (!image || error) return
-          map.addImage(`category-thumb-${'watering'}`, image)
+          map.addImage('thumb-watering', image)
         }
       })
     }
 
     return () => {
       if (map) {
-        map.off('click', `cluster-${'watering'}`, e => onClick(e))
-        map.off('click', `marker-${'watering'}`, e => onClick(e))
-        if (map.hasImage(`category-thumb-${'watering'}`)) {
-          map.removeImage(`category-thumb-${'watering'}`)
+        map.off('click', 'cluster-watering', e => onClick(e))
+        map.off('click', 'marker-watering', e => onClick(e))
+        if (map.hasImage('thumb-watering')) {
+          map.removeImage('thumb-watering')
         }
       }
     }

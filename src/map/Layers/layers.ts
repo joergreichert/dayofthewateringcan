@@ -2,10 +2,10 @@ import type { LayerProps } from 'react-map-gl'
 
 import tailwindConfig from '@/root/tailwind.config'
 
-export const clusterLayer = (categoryId: string, size: number, color: string): LayerProps => ({
-  id: `cluster-${categoryId}`,
+export const clusterLayer = (size: number, color: string): LayerProps => ({
+  id: 'cluster-watering',
   type: 'circle',
-  source: `source-${categoryId}`, // Use the correct source ID
+  source: 'source-watering',
   filter: ['has', 'point_count'],
   paint: {
     'circle-color': color,
@@ -13,10 +13,10 @@ export const clusterLayer = (categoryId: string, size: number, color: string): L
   },
 })
 
-export const clusterBelowLayer = (categoryId: string, size: number, color: string): LayerProps => ({
-  id: `cluster-below-${categoryId}`,
+export const clusterBelowLayer = (size: number, color: string): LayerProps => ({
+  id: 'cluster-below-watering',
   type: 'circle',
-  source: `source-${categoryId}`, // Use the correct source ID
+  source: 'source-watering',
   filter: ['has', 'point_count'],
   paint: {
     'circle-color': color,
@@ -25,10 +25,10 @@ export const clusterBelowLayer = (categoryId: string, size: number, color: strin
   },
 })
 
-export const clusterCountLayer = (categoryId: string): LayerProps => ({
-  id: `cluster-count-${categoryId}`,
+export const clusterCountLayer = (): LayerProps => ({
+  id: `cluster-count-watering`,
   type: 'symbol',
-  source: `source-${categoryId}`, // Use the correct source ID
+  source: `source-watering`,
   filter: ['has', 'point_count'],
   layout: {
     'text-field': '{point_count_abbreviated}',
@@ -42,10 +42,10 @@ export const clusterCountLayer = (categoryId: string): LayerProps => ({
   },
 })
 
-export const clusterCountBadgeLayer = (categoryId: string, size: number): LayerProps => ({
-  id: `cluster-badge-count-${categoryId}`,
+export const clusterCountBadgeLayer = (size: number): LayerProps => ({
+  id: 'cluster-badge-count-watering',
   type: 'circle',
-  source: `source-${categoryId}`, // Use the correct source ID
+  source: `source-watering`,
   filter: ['has', 'point_count'],
   paint: {
     'circle-color': 'transparent',
@@ -57,10 +57,10 @@ export const clusterCountBadgeLayer = (categoryId: string, size: number): LayerP
   },
 })
 
-export const markerLayer = (categoryId: string, size: number, color: string): LayerProps => ({
-  id: `marker-${categoryId}`,
+export const markerLayer = (size: number, color: string): LayerProps => ({
+  id: `marker-watering`,
   type: 'circle',
-  source: `source-${categoryId}`, // Use the correct source ID
+  source: `source-watering`,
   filter: ['!', ['has', 'point_count']],
   paint: {
     'circle-color': color,
@@ -68,14 +68,14 @@ export const markerLayer = (categoryId: string, size: number, color: string): La
   },
 })
 
-export const iconLayer = (category: string, size: number): LayerProps => ({
-  id: `icon-layer-${category}`,
+export const iconLayer = (size: number): LayerProps => ({
+  id: `icon-layer-watering`,
   type: 'symbol',
-  source: `source-${category}`, // Make sure to replace this with your source id
+  source: `source-watering`,
   layout: {
     'text-allow-overlap': true,
-    'icon-image': `category-thumb-${category}`, // Use the name you specified when loading the icon
-    'icon-size': (size / 2) * 0.025, // Adjust the size as needed
+    'icon-image': `thumb-watering`,
+    'icon-size': (size / 2) * 0.025,
     'text-ignore-placement': true,
     'text-optional': true,
   },
