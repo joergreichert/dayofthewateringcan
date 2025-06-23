@@ -16,24 +16,24 @@ import useMapStore from '@/zustand/useMapStore'
 import useSettingsStore from '@/zustand/useSettingsStore'
 
 const Layers = () => {
-  const { rawWaterings, getWateringById } = useWaterings()
   const markerSize = useSettingsStore(state => state.markerSize)
   const clusterRadius = useMapStore(state => state.clusterRadius)
   const setMarkerPopup = useMapStore(state => state.setMarkerPopup)
   const { map } = useMapContext()
   const { handleMapMove } = useMapActions()
+  const { waterings, getWateringById } = useWaterings()
 
   const wateringCluster = useMemo(() => {
-    const features: GeoJSON.Feature<GeoJSON.Point>[] = !rawWaterings
+    const features: GeoJSON.Feature<GeoJSON.Point>[] = !waterings
       ? []
-      : rawWaterings.map(place => ({
+      : waterings.map(watering => ({
           type: 'Feature',
           properties: {
-            id: place.id,
+            id: watering.id,
           },
           geometry: {
             type: 'Point',
-            coordinates: [place.longitude, place.latitude],
+            coordinates: [watering.longitude, watering.latitude],
           },
         }))
 
@@ -62,11 +62,11 @@ const Layers = () => {
         <Layer {...clusterCountLayer()} />
       </Source>
     )
-  }, [clusterRadius, markerSize, rawWaterings])
+  }, [clusterRadius, markerSize, waterings])
 
   const onClick = useCallback(
     (event: mapboxgl.MapMouseEvent & mapboxgl.EventData) => {
-      if (!map || !rawWaterings) return
+      if (!map || !waterings) return
       if (!map.loaded()) {
         return
       }
@@ -89,32 +89,30 @@ const Layers = () => {
               zoom: zoom + 0.5,
             })
           })
+        } else {
+          const markers = map.queryRenderedFeatures(event.point, { layers: ['marker-watering'] })
+          const marker = markers[0]
+          const markerId = marker?.properties?.id
+          if (!markerId) return
+          const watering = getWateringById(markerId)
+          if (!watering) return
+
+          setMarkerPopup(watering.id)
+
+          handleMapMove({
+            latitude: watering.latitude,
+            longitude: watering.longitude,
+            fly: false,
+            zoom: map.getZoom(),
+            offset: [0, -30],
+            mouseUpOnceCallback: () => {
+              setMarkerPopup(undefined)
+            },
+          })
         }
       })
-
-      setTimeout(() => {
-        const markers = map.queryRenderedFeatures(event.point, { layers: ['marker-watering'] })
-
-        const markerId = markers[0]?.properties?.id
-        if (!markerId) return
-        const place = getWateringById(markerId)
-        if (!place) return
-
-        setMarkerPopup(place.id)
-
-        handleMapMove({
-          latitude: place.latitude,
-          longitude: place.longitude,
-          fly: false,
-          zoom: map.getZoom(),
-          offset: [0, -30],
-          mouseUpOnceCallback: () => {
-            setMarkerPopup(undefined)
-          },
-        })
-      }, 500)
     },
-    [getWateringById, handleMapMove, map, setMarkerPopup, rawWaterings],
+    [getWateringById, handleMapMove, map, setMarkerPopup, waterings],
   )
 
   useEffect(() => {
@@ -141,7 +139,7 @@ const Layers = () => {
         }
       }
     }
-  }, [map, rawWaterings, onClick])
+  }, [map, waterings, onClick])
 
   return wateringCluster
 }

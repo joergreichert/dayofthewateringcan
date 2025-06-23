@@ -2,7 +2,7 @@ import { ViewState } from 'react-map-gl'
 import { create } from 'zustand'
 
 import { AppConfig } from '@/lib/AppConfig'
-import { WaterType } from '@/lib/types/entityTypes'
+import { WaterType, Watering } from '@/lib/types/entityTypes'
 
 interface MapStoreValues {
   viewportWidth?: number
@@ -25,6 +25,8 @@ interface MapStoreValues {
   setIsMapGlLoaded: (payload: boolean) => void
   clusterRadius: number
   setClusterRadius: (payload: number) => void
+  waterings: Watering[]
+  setWaterings: (waterings: Watering[]) => void
 }
 
 /**
@@ -61,6 +63,9 @@ const useMapStore = create<MapStoreValues>()(set => ({
 
   clusterRadius: AppConfig.defaultClusterRadius,
   setClusterRadius: payload => set(() => ({ clusterRadius: payload })),
+
+  waterings: [],
+  setWaterings: payload => set(() => ({ waterings: payload })),
 }))
 
 export default useMapStore

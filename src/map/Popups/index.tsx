@@ -8,8 +8,7 @@ import useMapStore from '@/zustand/useMapStore'
 const PopupsContainer = () => {
   const markerPopup = useMapStore(state => state.markerPopup)
   const setMarkerPopup = useMapStore(state => state.setMarkerPopup)
-  const { markerData } = useWaterings()
-  const { currentBounds } = useWaterings()
+  const { markerData, currentBounds } = useWaterings()
   const { handleMapMove } = useMapActions()
 
   const handleBackToCluster = useCallback(() => {
@@ -29,15 +28,16 @@ const PopupsContainer = () => {
   return (
     <>
       {markerPopup && <div className="bg-dark opacity-30 absolute inset-0 pointer-events-none" />}
-      {markerData.map(watering =>
-        watering.id === markerPopup ? (
-          <PopupItem
-            key={watering.id}
-            handleBackToCluster={handleBackToCluster}
-            watering={watering}
-          />
-        ) : null,
-      )}
+      {markerData &&
+        markerData.map(watering =>
+          watering.id === markerPopup ? (
+            <PopupItem
+              key={watering.id}
+              handleBackToCluster={handleBackToCluster}
+              watering={watering}
+            />
+          ) : null,
+        )}
     </>
   )
 }

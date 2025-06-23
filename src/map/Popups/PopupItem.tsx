@@ -35,7 +35,7 @@ const PopupItem = ({ watering, handleBackToCluster }: PopupItemProps) => {
     >
       <div className="bg-mapBg text-dark shadow-md rounded-md p-2 -mt-3 relative">
         <div className="flex justify-center absolute w-full left-0 top-0 mt-4">
-          <IconCircle path={`/${currentCat.iconPath}`} size={markerSize} invert />
+          <IconCircle path="/icons/watering-can.svg" size={markerSize} invert />
         </div>
         <Button
           className="absolute right-0 top-2 text-dark inline-block"
@@ -50,7 +50,17 @@ const PopupItem = ({ watering, handleBackToCluster }: PopupItemProps) => {
             style={{ marginTop: markerSize }}
           >
             <h3 className="text-lg font-bold leading-none m-0">{watering.name}</h3>
-            <p className="text-darkLight m-0  mt-2">Liter: {watering.liter}</p>
+            {watering.date && (
+              <p className="text-darkLight m-0  mt-2">
+                {new Date(watering.date).toLocaleString('de-DE')}
+              </p>
+            )}
+            <p className="text-darkLight m-0  mt-2">Gegossen: {watering.liter} Liter</p>
+            {watering.watertype && watering.watertype !== 6 && (
+              <p className="text-darkLight m-0  mt-2">
+                verwendetes Wasser: {getWaterTypeById(watering.watertype)?.name}
+              </p>
+            )}
             <div className="flex flex-row justify-between gap-2 mt-6">
               <Button
                 className="bg-warning text-white gap-2"

@@ -26,7 +26,7 @@ export interface Watering {
   id?: number | undefined
   name: string | undefined
   liter: number | undefined
-  date?: Date | undefined
+  date?: Date | string | undefined
   watertype: WATER_TYPE_ID
   longitude: number
   latitude: number

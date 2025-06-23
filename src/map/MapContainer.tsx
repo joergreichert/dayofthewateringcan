@@ -3,12 +3,14 @@ import dynamic from 'next/dynamic'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { ErrorEvent, MapLayerMouseEvent, ViewState, ViewStateChangeEvent } from 'react-map-gl'
 import Map from 'react-map-gl'
+import { useQuery, useQueryClient } from 'react-query'
 
 import { WateringModal } from '@/components/CreateDialog'
 import useDetectScreen from '@/hooks/useDetectScreen'
 import useEditableContext from '@/hooks/useEditableContext'
 import { useReverseGeocoding } from '@/hooks/useGeocoding'
-import useWaterings from '@/hooks/useWaterings'
+import useWaterings, { ViewportProps } from '@/hooks/useWaterings'
+import { fetchWaterings } from '@/hooks/useWateringsApi'
 import { AppConfig } from '@/lib/AppConfig'
 import MapContextProvider from '@/src/map/MapContextProvider'
 import MapControls from '@/src/map/MapControls'
@@ -38,6 +40,8 @@ const MapInner = () => {
   const setIsMapGlLoaded = useMapStore(state => state.setIsMapGlLoaded)
   const { setMap, map } = useMapContext()
   const { viewportWidth, viewportHeight, viewportRef } = useDetectScreen()
+  const { data: wateringResult, error, isLoading } = useQuery(['waterings'], fetchWaterings())
+  const setWaterings = useMapStore(state => state.setWaterings)
   const { allWateringsBounds } = useWaterings()
 
   const { handleMapMove, handleMapClick } = useMapActions()
@@ -55,9 +59,11 @@ const MapInner = () => {
   )
 
   const onLoad = useCallback(() => {
-    if (!allWateringsBounds || isMapGlLoaded) return
+    if (!wateringResult || isMapGlLoaded) return
+    setWaterings(wateringResult)
+    // setAllWatteringsBounds(getWateringsBounds(wateringResult));
     setIsMapGlLoaded(true)
-  }, [allWateringsBounds, isMapGlLoaded, setIsMapGlLoaded])
+  }, [isLoading, wateringResult, allWateringsBounds, isMapGlLoaded, setIsMapGlLoaded])
 
   const onMapMove = useCallback(
     (evt: ViewStateChangeEvent) => {
@@ -121,9 +127,9 @@ const MapInner = () => {
 
   return (
     <div className="absolute overflow-hidden inset-0 bg-mapBg" ref={viewportRef}>
-      {allWateringsBounds && (
+      {!isLoading && wateringResult && (
         <Map
-          // {...throttledSetViewState}
+          {...throttledSetViewState}
           initialViewState={allWateringsBounds}
           ref={e => setMap && setMap(e || undefined)}
           onError={e => onMapError(e)}
@@ -154,9 +160,10 @@ const MapInner = () => {
       )}
       {!isMapGlLoaded && (
         <div className="absolute inset-0 bg-mapBg flex justify-center items-center">
-          Loading Map...
+          Anwendung wird geladen...
         </div>
       )}
+      {!!error && <div>{JSON.stringify(error, null, 2)}</div>}
     </div>
   )
 }

@@ -1,10 +1,9 @@
 import { FitBoundsOptions, fitBounds } from '@math.gl/web-mercator'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import useDetectScreen from '@/hooks/useDetectScreen'
-import { fetchWaterings } from '@/hooks/useWateringsApi'
-import { apiWaterings } from '@/lib/api/wateringsMock'
 import { Watering } from '@/lib/types/entityTypes'
+import useMapStore from '@/zustand/useMapStore'
 import useSettingsStore from '@/zustand/useSettingsStore'
 
 const limitWateringsLength = (arr: Watering[], length: number) => {
@@ -14,31 +13,41 @@ const limitWateringsLength = (arr: Watering[], length: number) => {
   return arr
 }
 
+export type ViewportProps = {
+  latitude: number
+  longitude: number
+  zoom: number
+}
+
+type WateringResult = {
+  waterings: Watering[] | undefined
+  markerData: Watering[] | undefined
+  allWateringsBounds: ViewportProps | undefined
+  currentBounds: ViewportProps | undefined
+  getWateringById: (id: number | undefined) => Watering | undefined
+}
+
 /** hook to use the waterings from a cached api request */
-const useWaterings = () => {
+const useWaterings = (): WateringResult => {
   const markersCount = useSettingsStore(state => state.markersCount)
   const { viewportWidth, viewportHeight } = useDetectScreen()
-  const [rawWaterings, setRawWaterings] = useState<Watering[]>()
-
-  if (!rawWaterings) {
-    fetchWaterings().then(result => setRawWaterings(result))
-  }
+  const waterings = useMapStore(state => state.waterings)
 
   /** this mostly internally used memo contains the limiter - remove it in your application on demand */
-  const markerData = useMemo(() => limitWateringsLength(apiWaterings, markersCount), [markersCount])
+  const markerData = waterings && limitWateringsLength(waterings, markersCount)
 
   /** get watering object by id input */
   const getWateringById = useCallback(
-    (id: Watering['id']) => rawWaterings && rawWaterings.find(watering => watering.id === id),
-    [rawWaterings],
+    (id: Watering['id']) => waterings && waterings.find(watering => watering.id === id),
+    [waterings],
   )
 
   const getWateringsBounds = useCallback(
-    (waterings: Watering[], options?: FitBoundsOptions) => {
+    (input: Watering[], options?: FitBoundsOptions) => {
       if (!viewportWidth || !viewportHeight) return undefined
 
-      const lat = waterings.map(p => p.latitude)
-      const lng = waterings.map(p => p.longitude)
+      const lat = input.map(p => p.latitude)
+      const lng = input.map(p => p.longitude)
 
       const bounds: FitBoundsOptions['bounds'] = [
         [Math.min.apply(null, lng), Math.min.apply(null, lat)],
@@ -78,12 +87,12 @@ const useWaterings = () => {
   )
 
   return {
-    rawWaterings,
+    waterings,
     markerData,
     allWateringsBounds,
     currentBounds,
     getWateringById,
-  } as const
+  }
 }
 
 export default useWaterings

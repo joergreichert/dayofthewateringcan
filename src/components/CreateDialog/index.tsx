@@ -5,7 +5,7 @@ import styled from 'styled-components'
 
 import useEditableContext from '@/hooks/useEditableContext'
 import { useReverseGeocoding } from '@/hooks/useGeocoding'
-import { saveWaterings } from '@/hooks/useWateringsApi'
+import { fetchWaterings, saveWaterings } from '@/hooks/useWateringsApi'
 import { WATER_TYPE_ID } from '@/lib/constants'
 import { Watering } from '@/lib/types/entityTypes'
 

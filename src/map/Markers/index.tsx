@@ -8,7 +8,7 @@ import WateringMarkerCluster from '@/src/map/Markers/WateringMarkerCluster'
 import useMapStore from '@/zustand/useMapStore'
 
 const MarkersContainer = async () => {
-  const { rawWaterings, getWateringById } = await useWaterings()
+  const { waterings, getWateringById } = await useWaterings()
   const { map } = useMapContext()
   const markerPopup = useMapStore(state => state.markerPopup)
   const setMarkerPopup = useMapStore(state => state.setMarkerPopup)
@@ -45,7 +45,7 @@ const MarkersContainer = async () => {
       key="watering"
       mapBounds={mapBounds}
       map={map}
-      waterings={rawWaterings || []}
+      waterings={waterings || []}
       clusterRadius={clusterRadius}
     />
   )
