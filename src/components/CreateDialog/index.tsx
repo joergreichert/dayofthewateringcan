@@ -96,6 +96,7 @@ export const WateringModal: React.FC<ModalProps> = ({
     <Overlay onClick={() => setShowModal && setShowModal(false)}>
       <Modal onClick={e => e.stopPropagation()}>
         <div className="w-full p-5">
+          <div className="text-xl font-bold text-center">Gegossene Liter pro Stadtbaum</div>
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-[max-content_1fr] gap-3 p-5">
               <span>Ort</span>
