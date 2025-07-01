@@ -3,6 +3,8 @@ import { Context, createContext, useState } from 'react'
 interface EditableContextValues {
   editable: boolean
   setEditable: (e: boolean) => void
+  showModal: boolean
+  setShowModal: (e: boolean) => void
 }
 
 export const EditableContext: Context<EditableContextValues | undefined> = createContext<
@@ -15,9 +17,10 @@ interface EditableContextProviderProps {
 
 const EditableContextProvider = ({ children }: EditableContextProviderProps) => {
   const [editable, setEditable] = useState<boolean>(false)
+  const [showModal, setShowModal] = useState<boolean>(false)
 
   return (
-    <EditableContext.Provider value={{ editable, setEditable }}>
+    <EditableContext.Provider value={{ editable, setEditable, showModal, setShowModal }}>
       {children}
     </EditableContext.Provider>
   )

@@ -10,6 +10,7 @@ export const AppConfig = {
     markerIconSize: 32,
     twBorderRadius: 'rounded',
     mapIconSizeSmall: 28,
+    mapIconSizeVerySmall: 16,
     mapIconSizeBig: 56,
   },
   map: {

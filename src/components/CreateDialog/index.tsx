@@ -1,72 +1,15 @@
 import InputNumber from 'rc-input-number'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import CreatableSelect from 'react-select/creatable'
-import styled from 'styled-components'
 
 import useEditableContext from '@/hooks/useEditableContext'
-import { useReverseGeocoding } from '@/hooks/useGeocoding'
-import { fetchWaterings, saveWaterings } from '@/hooks/useWateringsApi'
+import { saveWaterings } from '@/hooks/useWateringsApi'
 import { WATER_TYPE_ID } from '@/lib/constants'
 import { Watering } from '@/lib/types/entityTypes'
 
-const Overlay = styled.div`
-  box-sizing: border-box;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(52, 64, 84, 0.6);
-  backdrop-filter: blur(8px);
-  animation: fadein 0.5s;
-
-  @keyframes fadein {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-`
-
-const Modal = styled.div`
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 25rem;
-  height: 18rem;
-  background: white;
-  border-radius: 0.75rem;
-  box-shadow: 0px 20px 24px -4px rgba(16, 24, 40, 0.1), 0px 8px 8px -4px rgba(16, 24, 40, 0.04);
-  transition: all 0.5s ease;
-  z-index: 20;
-`
-
-export const Button = styled.button`
-  background-color: #3f51b5;
-  color: white;
-  padding: 5px 15px;
-  border-radius: 5px;
-  outline: 0;
-  border: 0;
-  text-transform: uppercase;
-  margin: 10px 0px;
-  cursor: pointer;
-  box-shadow: 0px 2px 2px lightgray;
-  transition: ease background-color 250ms;
-  &:hover {
-    background-color: #283593;
-  }
-  &:disabled {
-    cursor: default;
-    opacity: 0.7;
-  }
-`
+import Button from '../Button/index'
+import Modal from '../Modal'
+import Overlay from '../Overlay'
 
 export interface LiterOption {
   readonly value: number
@@ -79,7 +22,6 @@ export interface WaterTypeOption {
 }
 
 type ModalProps = {
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>
   setSubmit: React.Dispatch<React.SetStateAction<boolean>>
   latitude: number | undefined
   longitude: number | undefined
@@ -87,13 +29,12 @@ type ModalProps = {
 }
 
 export const WateringModal: React.FC<ModalProps> = ({
-  setShowModal,
   setSubmit,
   latitude,
   longitude,
   resolvedLocation,
 }: ModalProps) => {
-  const { editable, setEditable } = useEditableContext()
+  const { setEditable, setShowModal } = useEditableContext()
   const defaultWaterTypeOptions: readonly WaterTypeOption[] = [
     { value: WATER_TYPE_ID.NOT_SPECIFIED, label: 'Keine Angabe' },
     { value: WATER_TYPE_ID.RAINWATER, label: 'Regenwasser' },
@@ -141,18 +82,18 @@ export const WateringModal: React.FC<ModalProps> = ({
     }
     await saveWaterings(watering)
     setSubmit(true)
-    setShowModal(false)
+    setShowModal && setShowModal(false)
     setEditable && setEditable(false)
   }
 
   const handleCancel = () => {
     setSubmit(false)
-    setShowModal(false)
+    setShowModal && setShowModal(false)
     setEditable && setEditable(false)
   }
 
   return (
-    <Overlay onClick={() => setShowModal(false)}>
+    <Overlay onClick={() => setShowModal && setShowModal(false)}>
       <Modal onClick={e => e.stopPropagation()}>
         <div className="w-full p-5">
           <form onSubmit={handleSubmit}>

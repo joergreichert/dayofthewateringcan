@@ -1,7 +1,7 @@
 import { Minimize2, X } from 'lucide-react'
 import { Popup } from 'react-map-gl'
 
-import Button from '@/components/Button'
+import Button from '@/components/Button/index'
 import IconCircle from '@/components/IconCircle'
 import useWaterTypes from '@/hooks/useWaterTypes'
 import { AppConfig } from '@/lib/AppConfig'
@@ -38,11 +38,10 @@ const PopupItem = ({ watering, handleBackToCluster }: PopupItemProps) => {
           <IconCircle path="/icons/watering-can.svg" size={markerSize} invert />
         </div>
         <Button
-          className="absolute right-0 top-2 text-dark inline-block"
+          className="absolute right-5 top-2 text-dark inline-block"
           onClick={() => setMarkerPopup(undefined)}
-          small
         >
-          <X size={AppConfig.ui.mapIconSizeSmall} />
+          <X size={AppConfig.ui.mapIconSizeVerySmall} />
         </Button>
         <div className="flex flex-row justify-center pt-3">
           <div
@@ -61,14 +60,12 @@ const PopupItem = ({ watering, handleBackToCluster }: PopupItemProps) => {
                 verwendetes Wasser: {getWaterTypeById(watering.watertype)?.name}
               </p>
             )}
-            <div className="flex flex-row justify-between gap-2 mt-6">
-              <Button
-                className="bg-warning text-white gap-2"
-                onClick={() => handleBackToCluster()}
-                small
-              >
-                <Minimize2 size={AppConfig.ui.mapIconSizeSmall} />
-                Herauszoomen
+            <div className="min-w-full flex flex-col items-center">
+              <Button className="gap-2" onClick={() => handleBackToCluster()}>
+                <div className="flex flex-row mt-1 gap-3 rounded">
+                  <Minimize2 size={AppConfig.ui.mapIconSizeSmall} />
+                  <div className="mt-1">Herauszoomen</div>
+                </div>
               </Button>
             </div>
           </div>

@@ -42,7 +42,7 @@ const Layers = () => {
       features,
     }
 
-    const catColor = '#708090'
+    const catColor = '#e2dc41'
 
     return (
       <Source
@@ -120,7 +120,7 @@ const Layers = () => {
       map.on('click', 'cluster-watering', e => onClick(e))
       map.on('click', 'marker-watering', e => onClick(e))
 
-      const catImage = '/icons/river-icon-clipart.png'
+      const catImage = '/icons/250701_icon-giesskanne.png'
 
       map?.loadImage(`${catImage}`, (error, image) => {
         if (!map.hasImage('thumb-watering')) {

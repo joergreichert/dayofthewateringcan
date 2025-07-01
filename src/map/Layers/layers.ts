@@ -37,7 +37,7 @@ export const clusterCountLayer = (): LayerProps => ({
     'text-allow-overlap': true,
   },
   paint: {
-    'text-color': tailwindConfig.theme.colors.white,
+    'text-color': tailwindConfig.theme.colors.dark,
     'text-opacity': 0.95,
   },
 })

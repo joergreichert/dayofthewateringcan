@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react'
 import { GeocodingResult, useGeocoding } from '@/hooks/useGeocoding'
 import { useSearchStore } from '@/hooks/useSearchStore'
 import useMapContext from '@/src/map/useMapContext'
-import useMapStore from '@/zustand/useMapStore'
 
 import { ClearIcon } from '../Icons/ClearIcon'
 

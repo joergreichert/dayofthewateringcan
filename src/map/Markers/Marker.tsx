@@ -76,7 +76,7 @@ const Marker = memo(
               size={markerSize}
               path="/icons/watering-can.svg"
               color={color}
-              bgColor="#708090"
+              bgColor="#e2dc41"
             />
           </div>
           {pointCount && <span className={styledBadgeClassNames}>{pointCount}</span>}

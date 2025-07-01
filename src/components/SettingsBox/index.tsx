@@ -1,14 +1,14 @@
 import useEditableContext from '@/hooks/useEditableContext'
-import { AppConfig } from '@/lib/AppConfig'
 
-import { Button } from '../CreateDialog'
+import Button from '../Button/index'
 
 const SettingsBox = () => {
-  const { editable, setEditable } = useEditableContext()
+  const { editable, setEditable, showModal } = useEditableContext()
 
   return (
     <div className="mt-40 lg:mt-20 absolute z-10 left-3">
       <Button
+        hidden={showModal}
         disabled={editable}
         type="button"
         onClick={e => {
