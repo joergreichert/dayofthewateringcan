@@ -119,7 +119,18 @@ const Layers = () => {
     if (map) {
       map.on('click', 'cluster-watering', e => onClick(e))
       map.on('click', 'marker-watering', e => onClick(e))
-
+      map.on('mousemove', 'cluster-watering', _ => {
+        map.getCanvas().style.cursor = 'pointer'
+      })
+      map.on('mouseleave', 'cluster-watering', _ => {
+        map.getCanvas().style.cursor = ''
+      })
+      map.on('mousemove', 'marker-watering', _ => {
+        map.getCanvas().style.cursor = 'pointer'
+      })
+      map.on('mouseleave', 'marker-watering', _ => {
+        map.getCanvas().style.cursor = ''
+      })
       const catImage = '/icons/250701_icon-giesskanne.png'
 
       map?.loadImage(`${catImage}`, (error, image) => {

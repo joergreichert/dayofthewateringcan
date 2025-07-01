@@ -49,9 +49,13 @@ const useWaterings = (): WateringResult => {
       const lat = input.map(p => p.latitude)
       const lng = input.map(p => p.longitude)
 
-      const bounds: FitBoundsOptions['bounds'] = [
+      /* const bounds: FitBoundsOptions['bounds'] = [
         [Math.min.apply(null, lng), Math.min.apply(null, lat)],
         [Math.max.apply(null, lng), Math.max.apply(null, lat)],
+      ] */
+      const bounds: FitBoundsOptions['bounds'] = [
+        [5.8663149923, 47.270111618],
+        [15.04193075, 55.0991611588],
       ]
 
       if (bounds[0][0] === Infinity || bounds[0][1] === Infinity) return undefined
