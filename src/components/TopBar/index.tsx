@@ -8,10 +8,10 @@ const TopBar = () => {
   const isMapGlLoaded = useMapStore(state => state.isMapGlLoaded)
 
   return isMapGlLoaded ? (
-    <div className="h-35 lg:h-20 absolute left-0 top-0 w-full shadow-md">
+    <div className="h-35 xl:h-20 absolute left-0 top-0 w-full shadow-md">
       <WaterTypeColorBg className="absolute inset-0" />
-      <div className="px-4 relative flex flex-col lg:flex-row items-center gap-2 justify-between h-full text-xl mb-3 lg:mb0">
-        <span className="mt-3 lg:mt-0 lg:w-2/3">
+      <div className="px-4 relative flex flex-col xl:flex-row items-center gap-2 justify-between h-full text-xl mb-3 xl:mb0">
+        <span className="mt-3 xl:mt-0 xl:w-2/3">
           <div className="flex flex-col">
             <div className="text-2xl font-bold">
               Gieß mit am 4. Juli 2025, dem{' '}
