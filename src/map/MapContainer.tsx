@@ -8,7 +8,7 @@ import { WateringModal } from '@/components/CreateDialog'
 import useDetectScreen from '@/hooks/useDetectScreen'
 import useEditableContext from '@/hooks/useEditableContext'
 import { useReverseGeocoding } from '@/hooks/useGeocoding'
-import useWaterings from '@/hooks/useWaterings'
+import useWaterings, { ViewportProps } from '@/hooks/useWaterings'
 import { useFetchWaterings } from '@/hooks/useWateringsApi'
 import { AppConfig } from '@/lib/AppConfig'
 import { Watering } from '@/lib/types/entityTypes'
@@ -43,9 +43,10 @@ const MapInner = () => {
   const { allWateringsBounds } = useWaterings()
 
   const { handleMapMove } = useMapActions()
-  const [submit, setSubmit] = useState<boolean>(false)
+  const [submit, setSubmit] = useState<Watering | undefined>(undefined)
   const [latitude, setLatitude] = useState<number>()
   const [longitude, setLongitude] = useState<number>()
+  const [created, setCreated] = useState<ViewportProps | undefined>()
 
   const { editable, showModal, setShowModal } = useEditableContext()
 
@@ -98,10 +99,17 @@ const MapInner = () => {
     if (!allWateringsBounds || !map) return undefined
 
     const timeout = setTimeout(() => {
+      let boundsToUse: ViewportProps
+      if (created) {
+        boundsToUse = created
+        setCreated(undefined)
+      } else {
+        boundsToUse = allWateringsBounds
+      }
       handleMapMove({
-        latitude: allWateringsBounds.latitude,
-        longitude: allWateringsBounds.longitude,
-        zoom: allWateringsBounds.zoom,
+        latitude: boundsToUse.latitude,
+        longitude: boundsToUse.longitude,
+        zoom: boundsToUse.zoom,
       })
     }, 30)
 
@@ -111,10 +119,17 @@ const MapInner = () => {
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (submit) {
+        if (map) {
+          setCreated({
+            latitude: submit.latitude,
+            longitude: submit.longitude,
+            zoom: map.getZoom(),
+          })
+        }
         refetch().then(result => result.data && setWaterings(result.data))
-        setSubmit(false)
+        setSubmit(undefined)
       }
-    }, 30)
+    }, 500)
     return () => clearTimeout(timeout)
   }, [submit])
 

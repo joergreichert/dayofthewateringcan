@@ -22,7 +22,7 @@ export interface WaterTypeOption {
 }
 
 type ModalProps = {
-  setSubmit: React.Dispatch<React.SetStateAction<boolean>>
+  setSubmit: React.Dispatch<React.SetStateAction<Watering | undefined>>
   latitude: number | undefined
   longitude: number | undefined
   resolvedLocation: string | undefined
@@ -83,13 +83,13 @@ export const WateringModal: React.FC<ModalProps> = ({
     }
     saveWaterings.mutateAsync(watering)
 
-    setSubmit(true)
+    setSubmit(watering)
     setShowModal && setShowModal(false)
     setEditable && setEditable(false)
   }
 
   const handleCancel = () => {
-    setSubmit(false)
+    setSubmit(undefined)
     setShowModal && setShowModal(false)
     setEditable && setEditable(false)
   }
