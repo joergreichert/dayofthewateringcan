@@ -13,7 +13,7 @@ const TopBar = () => {
       <div className="px-4 relative flex flex-col xl:flex-row items-center gap-2 justify-between h-full text-xl mb-3 xl:mb0">
         <span className="mt-3 xl:mt-0 xl:w-2/3">
           <div className="flex flex-col">
-            <div className="text-2xl font-bold">
+            <div className="text-sm md:text-base lg:text-2xl font-bold">
               Gieß mit am 4. Juli 2025, dem{' '}
               <a
                 className="underline"
@@ -25,7 +25,7 @@ const TopBar = () => {
               </a>
               !
             </div>
-            <div>
+            <div className="text-sm md:text-base">
               Ein Projekt des Netzwerks{' '}
               <a
                 className="underline"

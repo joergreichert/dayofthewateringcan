@@ -82,7 +82,7 @@ export const LocationSearch: React.FC = () => {
             <SearchIcon />
           </button>
           <input
-            className="w-full py-4 pl-2 focus:outline-none"
+            className="text-sm md:text-base w-full py-4 pl-2 focus:outline-none"
             type="text"
             value={selectedGeocodingResult?.place_name_de || isPickedGeoSearchResult}
             onKeyDown={e => {

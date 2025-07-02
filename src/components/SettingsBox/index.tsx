@@ -6,7 +6,7 @@ const SettingsBox = () => {
   const { editable, setEditable, showModal } = useEditableContext()
 
   return (
-    <div className="mt-60 sm:mt-40 xl:mt-20 absolute z-10 left-3">
+    <div className="mt-[35%] sm:mt-40 xl:mt-20 absolute z-10 left-3">
       <Button
         hidden={showModal}
         disabled={editable}
