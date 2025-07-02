@@ -72,7 +72,8 @@ const useMapActions = () => {
   const handleMapClick = useCallback(
     ({ latitude, longitude }: handleMapClickProps) => {
       if (map) {
-        const marker = new mapboxgl.Marker().setLngLat([longitude, latitude])
+        const marker = new mapboxgl.Marker()
+        marker.setLngLat([longitude, latitude])
         marker.addTo(map.getMap())
       }
     },

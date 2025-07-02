@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import CreatableSelect from 'react-select/creatable'
 
 import useEditableContext from '@/hooks/useEditableContext'
-import { saveWaterings } from '@/hooks/useWateringsApi'
+import { useSaveWaterings } from '@/hooks/useWateringsApi'
 import { WATER_TYPE_ID } from '@/lib/constants'
 import { Watering } from '@/lib/types/entityTypes'
 
@@ -34,6 +34,7 @@ export const WateringModal: React.FC<ModalProps> = ({
   longitude,
   resolvedLocation,
 }: ModalProps) => {
+  const saveWaterings = useSaveWaterings()
   const { setEditable, setShowModal } = useEditableContext()
   const defaultWaterTypeOptions: readonly WaterTypeOption[] = [
     { value: WATER_TYPE_ID.NOT_SPECIFIED, label: 'Keine Angabe' },
@@ -71,7 +72,7 @@ export const WateringModal: React.FC<ModalProps> = ({
     }, 1000)
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     const watering: Watering = {
       name: resolvedLocation,
       liter: literValue,
@@ -80,7 +81,8 @@ export const WateringModal: React.FC<ModalProps> = ({
       watertype: waterTypeValue?.value || WATER_TYPE_ID.NOT_SPECIFIED,
       date: new Date(),
     }
-    await saveWaterings(watering)
+    saveWaterings.mutateAsync(watering)
+
     setSubmit(true)
     setShowModal && setShowModal(false)
     setEditable && setEditable(false)

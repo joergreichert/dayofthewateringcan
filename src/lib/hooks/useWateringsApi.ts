@@ -1,32 +1,33 @@
-import { supabase } from '@/src/lib/supabaseClient'
+import { useMutation, useQuery } from 'react-query'
 
-import { Watering, WateringRaw } from '../types/entityTypes'
+import { fetchWaterings, saveWatering } from '../api/wateringApi'
+import { Watering } from '../types/entityTypes'
+import useSupabase from './useSupabase'
 
-export const fetchWaterings = () => async (): Promise<Watering[]> => {
-  const { data, error } = await supabase.from('waterings').select('*')
-
-  if (error) {
-    throw new Error(error.message)
-  }
-
-  return (data as WateringRaw[]).map(raw => ({
-    ...raw.properties,
-    id: raw.id,
-  }))
+export const useFetchWaterings = () => {
+  const client = useSupabase()
+  const queryKey = ['waterings']
+  const queryFn = async () => fetchWaterings(client)
+  return useQuery({ queryKey, queryFn })
 }
 
-export const saveWaterings = async (watering: Watering) => {
-  const wateringRaw: WateringRaw = {
-    created: (watering.date && new Date(watering.date)) || new Date(),
-    properties: watering,
-    geom: {
-      type: 'Point',
-      coordinates: [watering.longitude, watering.latitude],
-    },
-  }
-  const { error } = await supabase.from('waterings').insert(wateringRaw)
+export const useSaveWaterings = () => {
+  const client = useSupabase()
+  const mutationFn = async (watering: Watering) => saveWatering(client, watering)
+  return useMutation({ mutationFn })
+  /* return useMutation(mutationFn, {
+    onMutate: async (watering: Watering) => {
+      await queryClient.cancelQueries('waterings');
+      const snapshot = queryClient.getQueryData('waterings');
+      queryClient.setQueryData('waterings', (old: Watering[] | undefined) => [...(old ? old : []), watering]);
 
-  if (error) {
-    throw new Error(error.message)
-  }
+      return { snapshot }
+    },
+    onError: (err, newWatering, context: any) => {
+      queryClient.setQueryData('waterings', context.snapshot)
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries('waterings')
+    }
+  }); */
 }

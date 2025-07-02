@@ -3,15 +3,15 @@ import dynamic from 'next/dynamic'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { ErrorEvent, MapLayerMouseEvent, ViewState, ViewStateChangeEvent } from 'react-map-gl'
 import Map from 'react-map-gl'
-import { useQuery, useQueryClient } from 'react-query'
 
 import { WateringModal } from '@/components/CreateDialog'
 import useDetectScreen from '@/hooks/useDetectScreen'
 import useEditableContext from '@/hooks/useEditableContext'
 import { useReverseGeocoding } from '@/hooks/useGeocoding'
-import useWaterings, { ViewportProps } from '@/hooks/useWaterings'
-import { fetchWaterings } from '@/hooks/useWateringsApi'
+import useWaterings from '@/hooks/useWaterings'
+import { useFetchWaterings } from '@/hooks/useWateringsApi'
 import { AppConfig } from '@/lib/AppConfig'
+import { Watering } from '@/lib/types/entityTypes'
 import MapContextProvider from '@/src/map/MapContextProvider'
 import MapControls from '@/src/map/MapControls'
 import useMapActions from '@/src/map/useMapActions'
@@ -19,13 +19,11 @@ import useMapContext from '@/src/map/useMapContext'
 import useMapStore from '@/zustand/useMapStore'
 import useSettingsStore from '@/zustand/useSettingsStore'
 
-/** error handle */
 const onMapError = (evt: ErrorEvent) => {
   const { error } = evt
   throw new Error(`Map error: ${error.message}`)
 }
 
-// bundle splitting
 const Popups = dynamic(() => import('@/src/map/Popups'))
 const Markers = dynamic(() => import('@/src/map/Markers'))
 const Layers = dynamic(() => import('@/src/map/Layers'))
@@ -40,12 +38,12 @@ const MapInner = () => {
   const setIsMapGlLoaded = useMapStore(state => state.setIsMapGlLoaded)
   const { setMap, map } = useMapContext()
   const { viewportWidth, viewportHeight, viewportRef } = useDetectScreen()
-  const { data: wateringResult, error, isLoading } = useQuery(['waterings'], fetchWaterings())
+  const { data: wateringResult, error, isLoading, refetch } = useFetchWaterings()
   const setWaterings = useMapStore(state => state.setWaterings)
   const { allWateringsBounds } = useWaterings()
 
-  const { handleMapMove, handleMapClick } = useMapActions()
-  const [submit, setSubmit] = useState(false)
+  const { handleMapMove } = useMapActions()
+  const [submit, setSubmit] = useState<boolean>(false)
   const [latitude, setLatitude] = useState<number>()
   const [longitude, setLongitude] = useState<number>()
 
@@ -59,7 +57,6 @@ const MapInner = () => {
   const onLoad = useCallback(() => {
     if (!wateringResult || isMapGlLoaded) return
     setWaterings(wateringResult)
-    // setAllWatteringsBounds(getWateringsBounds(wateringResult));
     setIsMapGlLoaded(true)
   }, [isLoading, wateringResult, allWateringsBounds, isMapGlLoaded, setIsMapGlLoaded])
 
@@ -98,20 +95,8 @@ const MapInner = () => {
   }, [reverseGeocodingResults])
 
   useEffect(() => {
-    if (submit && latitude && longitude) {
-      handleMapClick({ latitude, longitude })
-      setSubmit(false)
-    }
-  }, [submit])
-
-  // react on change of marker bounding -> usually when viewport changes
-  // todo: find out why we need the timeout here
-  useEffect(() => {
     if (!allWateringsBounds || !map) return undefined
 
-    /**
-     * Timeout ID returned by setTimeout function.
-     */
     const timeout = setTimeout(() => {
       handleMapMove({
         latitude: allWateringsBounds.latitude,
@@ -123,12 +108,21 @@ const MapInner = () => {
     return () => clearTimeout(timeout)
   }, [allWateringsBounds, handleMapMove, map])
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (submit) {
+        refetch().then(result => result.data && setWaterings(result.data))
+        setSubmit(false)
+      }
+    }, 30)
+    return () => clearTimeout(timeout)
+  }, [submit])
+
   const [cursorX, setCursorX] = useState(0)
   const [cursorY, setCursorY] = useState(0)
   const [cursorStyle, setCursorStyle] = useState('hand')
   const [deviceType, setDeviceType] = useState('')
 
-  // check if it is a touch device
   const isTouchDevice = () => {
     try {
       document.createEvent('TouchEvent')
@@ -148,7 +142,6 @@ const MapInner = () => {
     setCursorX(x)
     setCursorY(y)
 
-    // Set the cursor border's position directly
     const cursorBorder = document.getElementById('cursor-border')
     if (cursorBorder) {
       cursorBorder.style.left = `${x}px`
