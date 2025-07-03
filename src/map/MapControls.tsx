@@ -1,7 +1,6 @@
-import { FullscreenControl, GeolocateControl, NavigationControl, ScaleControl } from 'react-map-gl'
+import { GeolocateControl, NavigationControl, ScaleControl } from 'react-map-gl'
 
 import useAppTheme from '@/hooks/useTheme'
-import { AppConfig } from '@/lib/AppConfig'
 
 const MapControls = () => {
   const { space } = useAppTheme()
@@ -9,15 +8,15 @@ const MapControls = () => {
   return (
     <>
       <NavigationControl
-        position="top-right"
+        showCompass={false}
+        position="bottom-right"
         style={{
-          marginTop: `calc(${AppConfig.ui.barHeight}px + ${space(4)}`,
+          zIndex: 10,
+          marginBottom: space(4),
           marginRight: space(4),
         }}
       />
-      <GeolocateControl position="top-right" style={{ marginRight: space(4) }} />
-      <FullscreenControl position="top-right" style={{ marginRight: space(4) }} />
-      <ScaleControl position="bottom-right" />
+      <GeolocateControl position="bottom-right" style={{ zIndex: 10, marginRight: space(4) }} />
     </>
   )
 }

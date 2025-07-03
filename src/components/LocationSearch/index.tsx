@@ -71,7 +71,7 @@ export const LocationSearch: React.FC = () => {
 
   return (
     <div className="flex flex-row w-full justify-center sm:justify-between pointer-events-auto gap-2 ">
-      <div className="flex flex-grow max-w-[80%] sm:max-w-[87%] h-fit flex-col pl-2 drop-shadow-md sm:pl-0">
+      <div className="flex flex-grow max-w-[100%] sm:max-w-[87%] md:max-w-[80%] h-fit flex-col pl-2 drop-shadow-md sm:pl-0">
         <form
           onSubmit={e => {
             e.preventDefault()
@@ -113,7 +113,7 @@ export const LocationSearch: React.FC = () => {
         </form>
 
         {geocodingResults.length > 0 && (
-          <div className="z-[1] absolute top-2/3 flex flex-col rounded-b-3xl bg-white pt-8">
+          <div className="z-20 absolute top-2/3 flex flex-col rounded-b-3xl bg-white pt-8">
             {geocodingResults.map((geocodingResult, idx) => (
               <button
                 type="button"
