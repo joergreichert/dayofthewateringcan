@@ -37,12 +37,15 @@ export const LocationSearch: React.FC = () => {
   })
 
   const onGeocodingResultClick = (geocodingResult: GeocodingResult) => {
-    map?.easeTo({
-      center: [geocodingResult.geometry.coordinates[0], geocodingResult.geometry.coordinates[1]],
-      essential: true,
-      duration: 1500,
-      zoom: 13,
-    })
+    setTimeout(() => {
+      map?.easeTo({
+        center: [geocodingResult.geometry.coordinates[0], geocodingResult.geometry.coordinates[1]],
+        essential: true,
+        duration: 1500,
+        zoom: 13,
+      })
+    }, 500)
+
     setSelectedGeocodingResult(geocodingResult)
     setisPickedGeoSearchResult(geocodingResult.place_name_de)
     setSelectedGeocodingResultIndex(0)

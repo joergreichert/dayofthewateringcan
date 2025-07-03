@@ -46,6 +46,8 @@ const useWaterings = (): WateringResult => {
     (input: Watering[], options?: FitBoundsOptions) => {
       if (!viewportWidth || !viewportHeight) return undefined
 
+      const isMobile = window.innerWidth < 768
+
       /*
       const lat = input.map(p => p.latitude)
       const lng = input.map(p => p.longitude)
@@ -71,6 +73,13 @@ const useWaterings = (): WateringResult => {
         options,
       } as FitBoundsOptions)
        */
+      if (isMobile) {
+        return {
+          longitude: 10.447958716687168,
+          latitude: 52.56102671270713,
+          zoom: 4.65,
+        }
+      }
       return {
         longitude: 10.447958716687168,
         latitude: 51.86102671270713,

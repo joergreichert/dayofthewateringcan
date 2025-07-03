@@ -51,7 +51,13 @@ const PopupItem = ({ watering, handleBackToCluster }: PopupItemProps) => {
             <h3 className="text-lg font-bold leading-none m-0">{watering.name}</h3>
             {watering.date && (
               <p className="text-darkLight m-0  mt-2">
-                {new Date(watering.date).toLocaleString('de-DE')}
+                {new Date(watering.date).toLocaleString('de-DE', {
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
               </p>
             )}
             <p className="text-darkLight m-0  mt-2">Gegossen: {watering.liter} Liter</p>
