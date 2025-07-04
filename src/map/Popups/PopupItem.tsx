@@ -22,6 +22,30 @@ const PopupItem = ({ watering, handleBackToCluster }: PopupItemProps) => {
 
   if (!currentCat) return null
 
+  let label
+  let link
+  const gdkPrefix = 'GiessDenKiez-WateringId-'
+  if (watering.name?.startsWith(gdkPrefix)) {
+    const treeId = watering.name.substring(gdkPrefix.length, watering.name.indexOf('__'))
+    link = `https://www.giessdenkiez.de/map?lang=de&treeId=${treeId.replace(':', '%3A')}`
+    label = 'GiessDenKiez'
+  } else {
+    const mgPrefix = 'MagdeburgGiesst-WateringId-'
+    if (watering.name?.startsWith(mgPrefix)) {
+      const treeId = watering.name.substring(gdkPrefix.length, watering.name.indexOf('__'))
+      link = `https://www.magdeburg-giesst.de/map?lang=de&treeId=${treeId}`
+      label = 'Magdeburg giesst'
+    } else {
+      const lgPrefix = 'LeipzigGiesst-WateringId-'
+      if (watering.name?.startsWith(lgPrefix)) {
+        let treeId = watering.name.substring(gdkPrefix.length, watering.name.indexOf('__'))
+        treeId = treeId.startsWith('-') ? treeId.substring(1, treeId.length) : treeId
+        link = `https://giessdeinviertel.codeforleipzig.de/tree/${treeId}`
+        label = 'LEIPZIG GIESST'
+      }
+    }
+  }
+
   return (
     <Popup
       className="w-10/12"
@@ -48,7 +72,15 @@ const PopupItem = ({ watering, handleBackToCluster }: PopupItemProps) => {
             className="flex flex-col justify-center p-3 text-center w-full"
             style={{ marginTop: markerSize }}
           >
-            <h3 className="text-lg font-bold leading-none m-0">{watering.name}</h3>
+            <h3 className="text-lg font-bold leading-none m-0">
+              {link ? (
+                <a className="underline" target="_blank" href={link} rel="noreferrer">
+                  Gießeintrag in {label}
+                </a>
+              ) : (
+                watering.name
+              )}
+            </h3>
             {watering.date && (
               <p className="text-darkLight m-0  mt-2">
                 {new Date(watering.date).toLocaleString('de-DE', {
