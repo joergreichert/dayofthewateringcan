@@ -32,14 +32,13 @@ const PopupItem = ({ watering, handleBackToCluster }: PopupItemProps) => {
   } else {
     const mgPrefix = 'MagdeburgGiesst-WateringId-'
     if (watering.name?.startsWith(mgPrefix)) {
-      const treeId = watering.name.substring(gdkPrefix.length, watering.name.indexOf('__'))
+      const treeId = watering.name.substring(mgPrefix.length, watering.name.indexOf('__'))
       link = `https://www.magdeburg-giesst.de/map?lang=de&treeId=${treeId}`
       label = 'Magdeburg giesst'
     } else {
       const lgPrefix = 'LeipzigGiesst-WateringId-'
       if (watering.name?.startsWith(lgPrefix)) {
-        let treeId = watering.name.substring(gdkPrefix.length, watering.name.indexOf('__'))
-        treeId = treeId.startsWith('-') ? treeId.substring(1, treeId.length) : treeId
+        const treeId = watering.name.substring(lgPrefix.length, watering.name.indexOf('__'))
         link = `https://giessdeinviertel.codeforleipzig.de/tree/${treeId}`
         label = 'LEIPZIG GIESST'
       }
