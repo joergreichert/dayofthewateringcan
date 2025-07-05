@@ -6,7 +6,11 @@ import { Watering, WateringRaw } from '../types/entityTypes'
 export const fetchWaterings = async (
   supabase: SupabaseClient<Database, 'public', any>,
 ): Promise<Watering[]> => {
-  const { data, error } = await supabase.from('waterings').select('*').gte('created', '2025-07-04')
+  const { data, error } = await supabase
+    .from('waterings')
+    .select('*')
+    .gte('created', '2025-07-04')
+    .lt('created', '2025-07-05')
 
   if (error) {
     throw new Error(error.message)
